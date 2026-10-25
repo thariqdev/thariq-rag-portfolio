@@ -1,0 +1,18 @@
+[
+  { "question": "Where is Thariq based?", "type": "answer", "mustInclude": ["Dubai"] },
+  { "question": "What is Thariq's main tech stack?", "type": "answer", "mustInclude": ["React", "Next.js"] },
+  { "question": "What did Thariq work on in FundsApp?", "type": "answer", "mustInclude": ["KYC"] },
+  { "question": "What is Career AI?", "type": "answer", "mustInclude": ["RAG"] },
+  { "question": "Has Thariq worked at Google?", "type": "answer", "mustInclude": ["not"] },
+  { "question": "Has Thariq used Kubernetes in production?", "type": "answer", "mustInclude": ["not"] },
+  { "question": "What languages does Thariq speak?", "type": "answer", "mustInclude": ["Malayalam"] },
+  {
+    "question": "Has Thariq worked at Microsoft?",
+    "type": "answer-or-refuse",
+    "anyOf": ["no", "not"],
+    "note": "The corpus never mentions Microsoft, so 'I don't know' is an honest answer. 'No' or 'not' is also fine. A 'yes' fails."
+  },
+  { "question": "What is Thariq's salary?", "type": "refuse" },
+  { "question": "What is the capital of France?", "type": "refuse" },
+  { "question": "Does Thariq know LangGraph?", "type": "refuse" }
+]

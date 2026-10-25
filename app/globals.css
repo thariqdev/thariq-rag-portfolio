@@ -1,26 +1,433 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/*
+  Design tokens, copied from design/code.html and design/code-res.html.
+  Both files share one Tailwind config, so these tokens cover desktop and phone.
+  Light theme only (the design sets darkMode: "class" but ships no dark styles).
+  `@theme static` makes Tailwind emit every variable as a real CSS custom property
+  (var(--color-primary), var(--shadow-chat-window), ...), even if no class uses it yet.
+*/
+@theme static {
+  /* ---- Colours (47) ---- */
+  --color-background: #fcf9f4;
+  --color-error: #ba1a1a;
+  --color-error-container: #ffdad6;
+  --color-inverse-on-surface: #f3f0eb;
+  --color-inverse-primary: #ffb4a3;
+  --color-inverse-surface: #31302d;
+  --color-on-background: #1c1c19;
+  --color-on-error: #ffffff;
+  --color-on-error-container: #93000a;
+  --color-on-primary: #ffffff;
+  --color-on-primary-container: #5a0c00;
+  --color-on-primary-fixed: #3d0600;
+  --color-on-primary-fixed-variant: #8c1900;
+  --color-on-secondary: #ffffff;
+  --color-on-secondary-container: #666460;
+  --color-on-secondary-fixed: #1d1b18;
+  --color-on-secondary-fixed-variant: #484743;
+  --color-on-surface: #1c1c19;
+  --color-on-surface-variant: #5b403a;
+  --color-on-tertiary: #ffffff;
+  --color-on-tertiary-container: #003312;
+  --color-on-tertiary-fixed: #002109;
+  --color-on-tertiary-fixed-variant: #005321;
+  --color-outline: #8f7069;
+  --color-outline-variant: #e3beb6;
+  --color-primary: #b52603;
+  --color-primary-container: #ff5a36;
+  --color-primary-fixed: #ffdad2;
+  --color-primary-fixed-dim: #ffb4a3;
+  --color-secondary: #605e5a;
+  --color-secondary-container: #e6e2dc;
+  --color-secondary-fixed: #e6e2dc;
+  --color-secondary-fixed-dim: #cac6c1;
+  --color-surface: #fcf9f4;
+  --color-surface-bright: #fcf9f4;
+  --color-surface-container: #f0ede9;
+  --color-surface-container-high: #ebe8e3;
+  --color-surface-container-highest: #e5e2dd;
+  --color-surface-container-low: #f6f3ee;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-dim: #dcdad5;
+  --color-surface-tint: #b52603;
+  --color-surface-variant: #e5e2dd;
+  --color-tertiary: #006e2f;
+  --color-tertiary-container: #00a94c;
+  --color-tertiary-fixed: #6bff8f;
+  --color-tertiary-fixed-dim: #4ae176;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  /* ---- Spacing names ---- */
+  --spacing-space-xl: 3.5rem;
+  --spacing-space-md: 1.25rem;
+  --spacing-gutter: 1.5rem;
+  --spacing-margin-lg: 5rem;
+  --spacing-space-sm: 0.75rem;
+  --spacing-margin: 1.5rem;
+  --spacing-space-xs: 0.375rem;
+  --spacing-margin-md: 3rem;
+  --spacing-gutter-lg: 2.5rem;
+  --spacing-space-lg: 2rem;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  /* ---- Type scale: size / line-height / letter-spacing / weight ---- */
+  --text-label-sm: 11px;
+  --text-label-sm--line-height: 14px;
+  --text-label-sm--letter-spacing: 0.06em;
+  --text-label-sm--font-weight: 400;
+  --text-headline-sm: 22px;
+  --text-headline-sm--line-height: 30px;
+  --text-headline-sm--font-weight: 500;
+  --text-headline-lg: 40px;
+  --text-headline-lg--line-height: 48px;
+  --text-headline-lg--letter-spacing: -0.015em;
+  --text-headline-lg--font-weight: 400;
+  --text-body-sm: 13px;
+  --text-body-sm--line-height: 20px;
+  --text-body-sm--font-weight: 400;
+  --text-body-lg: 18px;
+  --text-body-lg--line-height: 28px;
+  --text-body-lg--font-weight: 400;
+  --text-headline-md: 28px;
+  --text-headline-md--line-height: 36px;
+  --text-headline-md--letter-spacing: -0.01em;
+  --text-headline-md--font-weight: 500;
+  --text-display-mobile: 38px;
+  --text-display-mobile--line-height: 44px;
+  --text-display-mobile--letter-spacing: -0.01em;
+  --text-display-mobile--font-weight: 400;
+  --text-display: 56px;
+  --text-display--line-height: 64px;
+  --text-display--letter-spacing: -0.02em;
+  --text-display--font-weight: 400;
+  --text-label-md: 12px;
+  --text-label-md--line-height: 16px;
+  --text-label-md--letter-spacing: 0.04em;
+  --text-label-md--font-weight: 500;
+  --text-headline-lg-mobile: 30px;
+  --text-headline-lg-mobile--line-height: 36px;
+  --text-headline-lg-mobile--letter-spacing: -0.01em;
+  --text-headline-lg-mobile--font-weight: 400;
+  --text-body-md: 15px;
+  --text-body-md--line-height: 24px;
+  --text-body-md--font-weight: 400;
+
+  /* ---- Border radius (design: DEFAULT .25, lg .5, xl .75, full; plus 2xl/3xl/md used in markup) ---- */
+  --radius-sm: 0.25rem; /* also the bare "rounded" class in the design */
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.5rem;
+  --radius-full: 9999px;
+
+  /* ---- Shadows ----
+     The design was drawn with Tailwind v3. v4 renamed its built-in scale, so these
+     restore the v3 values the design used for shadow-sm / md / xl / inner. */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-inner: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
+  /* Exact custom shadows from the design markup */
+  --shadow-header: 0 1px 8px rgba(0, 0, 0, 0.04); /* desktop header */
+  --shadow-header-mobile: 0 1px 8px rgba(27, 26, 23, 0.03);
+  --shadow-pill-inset: inset 0 0 0 1px rgba(230, 224, 214, 0.7); /* availability pill */
+  --shadow-chat-window: 0 16px 40px -6px rgba(27, 26, 23, 0.18); /* desktop chat card */
+  --shadow-sheet: 0 -12px 40px rgba(27, 26, 23, 0.18); /* phone bottom sheet */
+  --shadow-tabbar: 0 -4px 20px rgba(27, 26, 23, 0.04); /* phone tab bar */
+  --shadow-launcher: 0 12px 32px -4px rgba(27, 26, 23, 0.18); /* desktop launcher */
+  --shadow-launcher-mobile: 0 12px 32px -4px rgba(27, 26, 23, 0.2);
+  --shadow-dock: 0 12px 32px -4px rgba(27, 26, 23, 0.12), 0 4px 12px -2px rgba(27, 26, 23, 0.06);
+
+  /* ---- Blur (v3 sizes the design used for backdrop-blur-sm / xl) ---- */
+  --blur-sm: 4px;
+  --blur-xl: 24px;
+
+  /* ---- Breakpoints (same as the design's Tailwind defaults) ---- */
+  --breakpoint-sm: 40rem; /* 640px */
+  --breakpoint-md: 48rem; /* 768px: phone layout below, desktop layout above */
+  --breakpoint-lg: 64rem; /* 1024px */
+
+  /* ---- Motion ---- */
+  --default-transition-duration: 150ms; /* transition-colors / transition-all (duration-150/200/300 also used) */
+  --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1); /* ease-out on the phone sheet */
+  --animate-ping: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite; /* availability + launcher beacons */
+  --animate-pulse: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; /* phone "Available" dot */
+  --animate-bounce: bounce 1s infinite; /* typing dots */
+
+  @keyframes ping {
+    75%,
+    100% {
+      transform: scale(2);
+      opacity: 0;
+    }
+  }
+  @keyframes pulse {
+    50% {
+      opacity: 0.5;
+    }
+  }
+  @keyframes bounce {
+    0%,
+    100% {
+      transform: translateY(-25%);
+      animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+    }
+    50% {
+      transform: none;
+      animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+    }
   }
 }
 
+/* ---- Fonts (loaded in app/layout.tsx with next/font) ---- */
+@theme inline {
+  /* The three roles */
+  --font-headline: var(--font-newsreader), Georgia, serif;
+  --font-body: var(--font-jakarta), system-ui, sans-serif;
+  --font-label: var(--font-jetbrains), ui-monospace, monospace;
+
+  /* The design's per-style names (font-headline-sm, font-label-md, ...), so its class names work as written */
+  --font-label-sm: var(--font-jetbrains), ui-monospace, monospace;
+  --font-headline-sm: var(--font-newsreader), Georgia, serif;
+  --font-headline-lg: var(--font-newsreader), Georgia, serif;
+  --font-body-sm: var(--font-jakarta), system-ui, sans-serif;
+  --font-body-lg: var(--font-jakarta), system-ui, sans-serif;
+  --font-headline-md: var(--font-newsreader), Georgia, serif;
+  --font-display-mobile: var(--font-newsreader), Georgia, serif;
+  --font-display: var(--font-newsreader), Georgia, serif;
+  --font-label-md: var(--font-jetbrains), ui-monospace, monospace;
+  --font-headline-lg-mobile: var(--font-newsreader), Georgia, serif;
+  --font-body-md: var(--font-jakarta), system-ui, sans-serif;
+
+  /* Extra animations that are NOT in the design: I added them for load-in and the chat sheet. */
+  --animate-rise: rise 0.7s ease-out both;
+  --animate-sheet-in: sheet-in 0.25s ease-out both;
+  /* New chat message / suggestion chip. The design has no code for this, so I reused its
+     duration-300 and ease-out. */
+  --animate-message-in: message-in 0.3s ease-out both;
+}
+
+/* ---- Base styles from the design ---- */
+html {
+  scroll-behavior: smooth; /* the design's scroll-smooth */
+  overflow-x: hidden;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-surface);
+  color: var(--color-on-surface);
+  font-family: var(--font-body);
+  font-size: 15px; /* text-body-md */
+  line-height: 24px;
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  background: var(--color-primary-fixed);
+  color: var(--color-on-primary-fixed);
+}
+
+/* The design hides scrollbars */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* Icon font (Material Symbols, linked in layout.tsx) */
+.material-symbols-outlined {
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+  line-height: 1;
+  display: inline-block;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+/* Icon sizes. Google's icon stylesheet sets font-size: 24px outside Tailwind's layers, which would beat
+   classes like text-[16px]. These rules (higher specificity) make the design's size classes work. */
+.material-symbols-outlined[class~="text-[10px]"] {
+  font-size: 10px;
+}
+.material-symbols-outlined[class~="text-[11px]"] {
+  font-size: 11px;
+}
+.material-symbols-outlined[class~="text-[12px]"] {
+  font-size: 12px;
+}
+.material-symbols-outlined[class~="text-[13px]"] {
+  font-size: 13px;
+}
+.material-symbols-outlined[class~="text-[14px]"] {
+  font-size: 14px;
+}
+.material-symbols-outlined[class~="text-[15px]"] {
+  font-size: 15px;
+}
+.material-symbols-outlined[class~="text-[16px]"] {
+  font-size: 16px;
+}
+.material-symbols-outlined[class~="text-[17px]"] {
+  font-size: 17px;
+}
+.material-symbols-outlined[class~="text-[18px]"] {
+  font-size: 18px;
+}
+.material-symbols-outlined[class~="text-[19px]"] {
+  font-size: 19px;
+}
+.material-symbols-outlined[class~="text-[20px]"] {
+  font-size: 20px;
+}
+.material-symbols-outlined[class~="text-[21px]"] {
+  font-size: 21px;
+}
+.material-symbols-outlined[class~="text-[22px]"] {
+  font-size: 22px;
+}
+.material-symbols-outlined[class~="text-[23px]"] {
+  font-size: 23px;
+}
+.material-symbols-outlined[class~="text-[24px]"] {
+  font-size: 24px;
+}
+.material-symbols-outlined[class~="text-[25px]"] {
+  font-size: 25px;
+}
+.material-symbols-outlined[class~="text-[26px]"] {
+  font-size: 26px;
+}
+.material-symbols-outlined[class~="text-[27px]"] {
+  font-size: 27px;
+}
+.material-symbols-outlined[class~="text-[28px]"] {
+  font-size: 28px;
+}
+.material-symbols-outlined[class~="text-[29px]"] {
+  font-size: 29px;
+}
+.material-symbols-outlined[class~="text-[30px]"] {
+  font-size: 30px;
+}
+.material-symbols-outlined[class~="text-[31px]"] {
+  font-size: 31px;
+}
+.material-symbols-outlined[class~="text-[32px]"] {
+  font-size: 32px;
+}
+@media (min-width: 48rem) {
+  .material-symbols-outlined[class~="md:text-[10px]"] {
+    font-size: 10px;
+  }
+  .material-symbols-outlined[class~="md:text-[11px]"] {
+    font-size: 11px;
+  }
+  .material-symbols-outlined[class~="md:text-[12px]"] {
+    font-size: 12px;
+  }
+  .material-symbols-outlined[class~="md:text-[13px]"] {
+    font-size: 13px;
+  }
+  .material-symbols-outlined[class~="md:text-[14px]"] {
+    font-size: 14px;
+  }
+  .material-symbols-outlined[class~="md:text-[15px]"] {
+    font-size: 15px;
+  }
+  .material-symbols-outlined[class~="md:text-[16px]"] {
+    font-size: 16px;
+  }
+  .material-symbols-outlined[class~="md:text-[17px]"] {
+    font-size: 17px;
+  }
+  .material-symbols-outlined[class~="md:text-[18px]"] {
+    font-size: 18px;
+  }
+  .material-symbols-outlined[class~="md:text-[19px]"] {
+    font-size: 19px;
+  }
+  .material-symbols-outlined[class~="md:text-[20px]"] {
+    font-size: 20px;
+  }
+  .material-symbols-outlined[class~="md:text-[21px]"] {
+    font-size: 21px;
+  }
+  .material-symbols-outlined[class~="md:text-[22px]"] {
+    font-size: 22px;
+  }
+  .material-symbols-outlined[class~="md:text-[23px]"] {
+    font-size: 23px;
+  }
+  .material-symbols-outlined[class~="md:text-[24px]"] {
+    font-size: 24px;
+  }
+  .material-symbols-outlined[class~="md:text-[25px]"] {
+    font-size: 25px;
+  }
+  .material-symbols-outlined[class~="md:text-[26px]"] {
+    font-size: 26px;
+  }
+  .material-symbols-outlined[class~="md:text-[27px]"] {
+    font-size: 27px;
+  }
+  .material-symbols-outlined[class~="md:text-[28px]"] {
+    font-size: 28px;
+  }
+  .material-symbols-outlined[class~="md:text-[29px]"] {
+    font-size: 29px;
+  }
+  .material-symbols-outlined[class~="md:text-[30px]"] {
+    font-size: 30px;
+  }
+  .material-symbols-outlined[class~="md:text-[31px]"] {
+    font-size: 31px;
+  }
+  .material-symbols-outlined[class~="md:text-[32px]"] {
+    font-size: 32px;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes message-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes sheet-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Respect "reduce motion": turn off every animation and transition. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
 }
