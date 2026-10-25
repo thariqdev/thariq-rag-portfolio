@@ -63,4 +63,4 @@ He is open to relocating to Qatar.
 ## How can I contact Thariq?
 Email: thariqmohammed0310@gmail.com
 GitHub: github.com/thariqdev
-LinkedIn: linkedin.com/in/mohammed-thariq-b11b673b2
+LinkedIn: linkedin.com/in/b-mohammed-thariq-b11b673b2

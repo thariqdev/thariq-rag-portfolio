@@ -4,7 +4,7 @@ import Icon from "./Icon";
 // Contact details come from corpus/cv.md. There is no phone number and no address.
 const EMAIL = "thariqmohammed0310@gmail.com";
 const GITHUB_URL = "https://github.com/thariqdev";
-const LINKEDIN_URL = "https://linkedin.com/in/mohammed-thariq-b11b673b2";
+const LINKEDIN_URL = "https://www.linkedin.com/in/b-mohammed-thariq-b11b673b2/";
 
 // Brand marks used on the phone rows (paths from the design)
 const GITHUB_PATH =
@@ -55,7 +55,7 @@ export default function Contact() {
                 <svg className="w-5 h-5 fill-[#0A66C2] shrink-0" viewBox="0 0 24 24" aria-hidden="true">
                   <path d={LINKEDIN_PATH} />
                 </svg>
-                <span className="font-body-sm text-body-sm text-on-surface font-medium truncate">linkedin.com/in/mohammed-thariq-b11b673b2</span>
+                <span className="font-body-sm text-body-sm text-on-surface font-medium truncate">linkedin.com/in/b-mohammed-thariq-b11b673b2</span>
               </div>
               <Icon name="arrow_forward" className="text-secondary text-[18px]" />
             </a>
@@ -92,7 +92,7 @@ export default function Contact() {
             <a className="p-4 rounded-xl bg-surface-container-lowest hover:bg-surface-container-highest transition-colors flex items-center justify-between group shadow-sm" href={LINKEDIN_URL} rel="noopener noreferrer" target="_blank">
               <div className="flex items-center gap-3">
                 <Icon name="share" className="text-[#0A66C2] text-[20px]" />
-                <span className="text-on-surface font-medium truncate">linkedin.com/in/mohammed-thariq-b11b673b2</span>
+                <span className="text-on-surface font-medium truncate">linkedin.com/in/b-mohammed-thariq-b11b673b2</span>
               </div>
               <Icon name="arrow_outward" className="text-secondary group-hover:translate-x-1 transition-transform text-[18px]" />
             </a>
