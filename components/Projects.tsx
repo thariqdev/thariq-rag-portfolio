@@ -271,9 +271,8 @@ export default function Projects() {
               <div className="p-6 rounded-xl bg-surface-container-lowest flex flex-col gap-5">
                 <div className="flex flex-col gap-1">
                   <span className="font-label-sm text-label-sm uppercase tracking-wider text-secondary">What It Does</span>
-                  <div className="p-3.5 rounded-lg bg-surface-container-low font-label-sm text-label-sm text-on-surface flex items-center justify-between">
+                  <div className="p-3.5 rounded-lg bg-surface-container-low font-label-sm text-label-sm text-on-surface">
                     <span>Skills · job matching · interview prep · application tracking</span>
-                    <Icon name="search" className="text-primary text-[18px]" />
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
