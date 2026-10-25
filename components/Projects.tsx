@@ -82,7 +82,8 @@ export default function Projects() {
                   RAG Assistant
                 </span>
               </div>
-              <a className="flex items-center gap-0.5 font-label-sm text-label-sm text-primary hover:underline" href={GITHUB_CAREER_AI} rel="noopener noreferrer" target="_blank">
+              {/* py-4 with -my-4 makes the tap area 46px tall without moving anything */}
+              <a className="flex items-center gap-0.5 py-4 -my-4 font-label-sm text-label-sm text-primary hover:underline" href={GITHUB_CAREER_AI} rel="noopener noreferrer" target="_blank">
                 <span>github.com</span>
                 <Icon name="arrow_outward" className="text-[14px]" />
               </a>
@@ -93,15 +94,15 @@ export default function Projects() {
             </p>
             {/* Retrieval box */}
             <div className="p-3.5 rounded-xl bg-surface-container mb-4 flex flex-col gap-2">
-              <div className="flex items-center justify-between">
-                <span className="font-label-sm text-label-sm text-primary font-medium flex items-center gap-1">
+              <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+                <span className="font-label-sm text-label-sm text-primary font-medium flex items-center gap-1 whitespace-nowrap">
                   <Icon name="database" className="text-[15px]" />
                   Hybrid Retrieval
                 </span>
-                <span className="font-label-sm text-label-sm text-secondary">BM25 + Embeddings</span>
+                <span className="font-label-sm text-label-sm text-secondary whitespace-nowrap">BM25 + Embeddings</span>
               </div>
               <div className="p-2.5 rounded-lg bg-surface font-label-sm text-label-sm text-on-surface font-mono flex flex-col gap-1">
-                <div className="text-secondary truncate">&gt; compare: job description vs. user skills</div>
+                <div className="text-secondary break-words">&gt; compare: job description vs. user skills</div>
                 <div className="text-on-surface-variant">&quot;Lists the gaps between them.&quot;</div>
               </div>
             </div>
@@ -278,7 +279,7 @@ export default function Projects() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="p-4 rounded-lg bg-surface-container border-l-2 border-primary-container flex flex-col gap-2">
                     <div className="flex items-center justify-between">
-                      <span className="font-label-sm text-label-sm text-primary-container font-semibold">[project-careerai.md]</span>
+                      <span className="font-label-sm text-label-sm text-primary font-semibold">[project-careerai.md]</span>
                       <span className="font-label-sm text-label-sm text-tertiary">Skills</span>
                     </div>
                     <p className="font-body-sm text-body-sm text-secondary">Each skill has a status: VERIFIED, PARTIAL, PROVISIONAL or NOT_VERIFIED.</p>

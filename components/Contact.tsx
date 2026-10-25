@@ -25,39 +25,48 @@ export default function Contact() {
           </div>
           <span className="font-label-sm text-label-sm text-secondary">Direct Channels</span>
         </div>
-        <div className="p-space-md rounded-2xl bg-surface-container flex flex-col gap-4 shadow-sm">
+        {/* max-[389px]: slightly tighter padding on small phones so the email stays on one line */}
+        <div className="p-space-md max-[389px]:p-4 rounded-2xl bg-surface-container flex flex-col gap-4 shadow-sm">
           <div className="flex flex-col gap-1">
             <span className="font-headline-sm text-headline-sm text-on-surface font-normal">Get in touch</span>
             <p className="font-body-sm text-body-sm text-secondary">Based in Dubai, UAE. Available to join immediately.</p>
           </div>
+          {/* Three rows built the same way: icon, a small label, the value, an arrow. Equal heights, and the
+              long LinkedIn address is not printed on the phone (the link still goes to the profile). */}
           <div className="flex flex-col gap-2.5 pt-1">
             {/* Email */}
-            <a className="flex items-center justify-between p-3 rounded-xl bg-surface active:scale-[0.99] transition-all" href={`mailto:${EMAIL}`}>
-              <div className="flex items-center gap-2.5 min-w-0">
-                <Icon name="alternate_email" className="text-primary text-[20px]" />
-                <span className="font-body-sm text-body-sm text-on-surface font-medium truncate">{EMAIL}</span>
+            <a className="flex items-center gap-2.5 max-[389px]:gap-2 min-h-[60px] p-3 max-[389px]:p-2.5 rounded-xl bg-surface active:scale-[0.99] transition-all" href={`mailto:${EMAIL}`}>
+              <Icon name="alternate_email" className="text-primary text-[20px]" />
+              <div className="flex flex-col min-w-0 flex-1">
+                <span className="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Email</span>
+                <span className="font-body-sm text-[12px] leading-5 text-on-surface font-medium [overflow-wrap:anywhere]">
+                  {/* if the address has to wrap, it breaks after the @ instead of in the middle of a word */}
+                  {EMAIL.split("@")[0]}@<wbr />{EMAIL.split("@")[1]}
+                </span>
               </div>
-              <Icon name="arrow_forward" className="text-secondary text-[18px]" />
+              <Icon name="arrow_outward" className="text-secondary text-[18px]" />
             </a>
             {/* GitHub */}
-            <a className="flex items-center justify-between p-3 rounded-xl bg-surface active:scale-[0.99] transition-all" href={GITHUB_URL} rel="noopener noreferrer" target="_blank">
-              <div className="flex items-center gap-2.5 min-w-0">
-                <svg className="w-5 h-5 fill-current text-on-surface shrink-0" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d={GITHUB_PATH} />
-                </svg>
-                <span className="font-body-sm text-body-sm text-on-surface font-medium truncate">github.com/thariqdev</span>
+            <a className="flex items-center gap-2.5 max-[389px]:gap-2 min-h-[60px] p-3 max-[389px]:p-2.5 rounded-xl bg-surface active:scale-[0.99] transition-all" href={GITHUB_URL} rel="noopener noreferrer" target="_blank">
+              <svg className="w-5 h-5 fill-current text-on-surface shrink-0" viewBox="0 0 24 24" aria-hidden="true">
+                <path d={GITHUB_PATH} />
+              </svg>
+              <div className="flex flex-col min-w-0 flex-1">
+                <span className="font-label-sm text-label-sm text-secondary uppercase tracking-wider">GitHub</span>
+                <span className="font-body-sm text-[12px] leading-5 text-on-surface font-medium [overflow-wrap:anywhere]">github.com/thariqdev</span>
               </div>
-              <Icon name="arrow_forward" className="text-secondary text-[18px]" />
+              <Icon name="arrow_outward" className="text-secondary text-[18px]" />
             </a>
             {/* LinkedIn */}
-            <a className="flex items-center justify-between p-3 rounded-xl bg-surface active:scale-[0.99] transition-all" href={LINKEDIN_URL} rel="noopener noreferrer" target="_blank">
-              <div className="flex items-center gap-2.5 min-w-0">
-                <svg className="w-5 h-5 fill-[#0A66C2] shrink-0" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d={LINKEDIN_PATH} />
-                </svg>
-                <span className="font-body-sm text-body-sm text-on-surface font-medium truncate">linkedin.com/in/b-mohammed-thariq-b11b673b2</span>
+            <a className="flex items-center gap-2.5 max-[389px]:gap-2 min-h-[60px] p-3 max-[389px]:p-2.5 rounded-xl bg-surface active:scale-[0.99] transition-all" href={LINKEDIN_URL} rel="noopener noreferrer" target="_blank">
+              <svg className="w-5 h-5 fill-[#0A66C2] shrink-0" viewBox="0 0 24 24" aria-hidden="true">
+                <path d={LINKEDIN_PATH} />
+              </svg>
+              <div className="flex flex-col min-w-0 flex-1">
+                <span className="font-label-sm text-label-sm text-secondary uppercase tracking-wider">LinkedIn</span>
+                <span className="font-body-sm text-[12px] leading-5 text-on-surface font-medium">View profile</span>
               </div>
-              <Icon name="arrow_forward" className="text-secondary text-[18px]" />
+              <Icon name="arrow_outward" className="text-secondary text-[18px]" />
             </a>
           </div>
         </div>
@@ -66,7 +75,7 @@ export default function Contact() {
       {/* ================= DESKTOP: editorial contact card (design/code.html) ================= */}
       <section className="hidden md:block max-w-7xl mx-auto px-margin md:px-margin-md lg:px-margin-lg py-16 w-full">
         <div className="p-10 md:p-14 rounded-3xl bg-surface-container-low shadow-sm grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-          <div className="lg:col-span-7 flex flex-col gap-4">
+          <div className="lg:col-span-6 flex flex-col gap-4">
             <div className="inline-flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-primary-container"></span>
               <span className="font-label-sm text-label-sm uppercase tracking-widest text-secondary">Direct Communication</span>
@@ -74,25 +83,26 @@ export default function Contact() {
             <h2 className="font-display text-display text-on-surface leading-tight">Let&apos;s talk.</h2>
             <p className="font-body-lg text-body-lg text-secondary max-w-xl">Based in Dubai, UAE. Available to join immediately.</p>
           </div>
-          <div className="lg:col-span-5 flex flex-col gap-3 font-label-md text-label-md">
+          {/* 6/6 columns, not the design's 7/5: the longer LinkedIn address needs the room */}
+          <div className="lg:col-span-6 flex flex-col gap-3 font-label-md text-label-md">
             <a className="p-4 rounded-xl bg-surface-container-lowest hover:bg-surface-container-highest transition-colors flex items-center justify-between group shadow-sm" href={`mailto:${EMAIL}`}>
-              <div className="flex items-center gap-3">
+              <div className="flex min-w-0 items-center gap-3">
                 <Icon name="alternate_email" className="text-primary text-[20px]" />
-                <span className="text-on-surface font-medium truncate">{EMAIL}</span>
+                <span className="text-on-surface font-medium break-words">{EMAIL}</span>
               </div>
-              <Icon name="arrow_forward" className="text-secondary group-hover:translate-x-1 transition-transform text-[18px]" />
+              <Icon name="arrow_outward" className="text-secondary group-hover:translate-x-1 transition-transform text-[18px]" />
             </a>
             <a className="p-4 rounded-xl bg-surface-container-lowest hover:bg-surface-container-highest transition-colors flex items-center justify-between group shadow-sm" href={GITHUB_URL} rel="noopener noreferrer" target="_blank">
-              <div className="flex items-center gap-3">
+              <div className="flex min-w-0 items-center gap-3">
                 <Icon name="code" className="text-on-surface text-[20px]" />
                 <span className="text-on-surface font-medium">github.com/thariqdev</span>
               </div>
               <Icon name="arrow_outward" className="text-secondary group-hover:translate-x-1 transition-transform text-[18px]" />
             </a>
             <a className="p-4 rounded-xl bg-surface-container-lowest hover:bg-surface-container-highest transition-colors flex items-center justify-between group shadow-sm" href={LINKEDIN_URL} rel="noopener noreferrer" target="_blank">
-              <div className="flex items-center gap-3">
+              <div className="flex min-w-0 items-center gap-3">
                 <Icon name="share" className="text-[#0A66C2] text-[20px]" />
-                <span className="text-on-surface font-medium truncate">linkedin.com/in/b-mohammed-thariq-b11b673b2</span>
+                <span className="text-on-surface font-medium break-words">linkedin.com/in/b-mohammed-thariq-b11b673b2</span>
               </div>
               <Icon name="arrow_outward" className="text-secondary group-hover:translate-x-1 transition-transform text-[18px]" />
             </a>

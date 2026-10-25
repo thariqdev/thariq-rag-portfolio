@@ -33,7 +33,11 @@ export default function Hero() {
         {/* Name and credential */}
         <div className="flex flex-col gap-1">
           <h1 className="font-headline-lg-mobile text-headline-lg-mobile text-on-surface font-normal tracking-tight">B Mohammed Thariq</h1>
-          <p className="font-label-md text-label-md text-secondary tracking-wider uppercase">Full Stack Software Engineer · 3+ years exp</p>
+          {/* Below 480px the experience goes on its own line, with no bullet, so nothing breaks mid-phrase */}
+          <p className="font-label-md text-label-md text-secondary tracking-wider uppercase">
+            Full Stack Software Engineer<span className="hidden min-[480px]:inline"> · </span>
+            <span className="max-[479px]:block">3+ years exp</span>
+          </p>
         </div>
 
         {/* Bio with the two coral underlines */}
@@ -65,14 +69,15 @@ export default function Hero() {
         </div>
 
         {/* Action buttons */}
-        <div className="flex items-center gap-space-sm pt-1">
+        {/* Below 340px the two buttons stack, so the labels never wrap onto two lines */}
+        <div className="flex items-center gap-space-sm pt-1 max-[339px]:flex-col max-[339px]:items-stretch">
           <OpenChatButton
             icon="chat_bubble"
             iconClassName="text-[19px]"
-            className="flex-1 flex items-center justify-center gap-2 h-12 px-space-md rounded-xl bg-primary-container text-on-primary font-body-md text-body-md font-medium shadow-sm active:scale-[0.98] transition-all"
+            className="flex-1 max-[339px]:flex-none whitespace-nowrap flex items-center justify-center gap-2 h-12 px-space-md rounded-xl bg-primary-container text-on-primary font-body-md text-body-md font-medium shadow-sm active:scale-[0.98] transition-all"
           />
           <a
-            className="flex items-center justify-center gap-2 h-12 px-space-md rounded-xl bg-surface-container text-on-surface font-body-md text-body-md font-medium active:scale-[0.98] transition-all"
+            className="whitespace-nowrap flex items-center justify-center gap-2 h-12 px-space-md rounded-xl bg-surface-container text-on-surface font-body-md text-body-md font-medium active:scale-[0.98] transition-all"
             href="https://github.com/thariqdev"
             rel="noopener noreferrer"
             target="_blank"
@@ -118,11 +123,11 @@ export default function Hero() {
               <strong className="text-on-surface font-semibold">React, Next.js, TypeScript, Python, FastAPI, and PostgreSQL</strong>. Based in Dubai and available to join immediately.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-space-md pt-2">
+            <div className="flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-space-md pt-2">
               <OpenChatButton
                 icon="forum"
                 iconClassName="text-[19px] group-hover:rotate-6 transition-transform"
-                labelClassName="font-label-md text-label-md uppercase tracking-wider"
+                labelClassName="font-label-md text-label-md uppercase tracking-wider whitespace-nowrap"
                 className="group px-6 py-3.5 rounded-xl bg-primary-container hover:bg-primary transition-all duration-200 text-on-primary font-medium flex items-center gap-2.5 shadow-md active:scale-[0.98]"
               />
               <a
@@ -159,7 +164,7 @@ export default function Hero() {
                       <Icon name={row.icon} className="text-secondary text-[16px]" />
                       <span className="text-on-surface">{row.file}</span>
                     </div>
-                    <span className="text-tertiary uppercase text-[10px] font-semibold">Indexed</span>
+                    <span className="text-tertiary uppercase text-[11px] font-semibold">Indexed</span>
                   </div>
                 ))}
               </div>

@@ -49,6 +49,11 @@ export default function ChatWidget() {
     return () => clearTimeout(t);
   }, [open]);
 
+  // When the panel opens with no messages yet, start at the top, so the greeting is never cut off.
+  useEffect(() => {
+    if (shown && messages.length === 0) listRef.current?.scrollTo({ top: 0 });
+  }, [shown, messages.length]);
+
   // Focus the input when the card opens on desktop (the design does this). Not on phones: it would
   // pop the keyboard up and hide the conversation.
   useEffect(() => {
@@ -134,11 +139,12 @@ export default function ChatWidget() {
           <div
             inert={!bubbleVisible}
             aria-hidden={!bubbleVisible}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-full bg-inverse-surface text-inverse-on-surface shadow-xl transition-all duration-300 transform ${bubbleState}`}
+            // Hidden on screens narrower than 360px, where it would cover too much of the page
+            className={`flex max-[359px]:hidden items-center gap-2 px-3 py-1.5 rounded-full bg-inverse-surface text-inverse-on-surface shadow-xl transition-all duration-300 transform ${bubbleState}`}
           >
             <span className="font-label-sm text-label-sm">Ask me about my projects</span>
             <button
-              className="text-inverse-on-surface/70 hover:text-inverse-on-surface p-0.5 rounded-full flex items-center justify-center"
+              className="text-inverse-on-surface/70 hover:text-inverse-on-surface p-[15px] -m-[13px] rounded-full flex items-center justify-center"
               onClick={dismissBubble}
               aria-label="Dismiss greeting"
               type="button"
@@ -192,7 +198,7 @@ export default function ChatWidget() {
             </div>
             <div className="flex flex-col text-left">
               <span className="font-label-sm text-label-sm uppercase tracking-widest text-primary-fixed">Talk to Thariq</span>
-              <span className="text-[10px] text-secondary font-label-sm leading-none">RAG Document Assistant</span>
+              <span className="text-[11px] text-secondary-fixed-dim font-label-sm leading-none">RAG Document Assistant</span>
             </div>
           </button>
         </div>
@@ -230,7 +236,7 @@ export default function ChatWidget() {
           onClick={() => setOpen(false)}
           aria-label="Close chat"
           type="button"
-          className="w-full pt-3 pb-1 flex justify-center cursor-pointer shrink-0 md:hidden"
+          className="w-full pt-2.5 pb-0.5 flex justify-center cursor-pointer shrink-0 md:hidden"
         >
           <span className="w-10 h-1 rounded-full bg-secondary-fixed-dim"></span>
         </button>
@@ -244,7 +250,8 @@ export default function ChatWidget() {
                 <span className="font-body-sm text-body-sm font-medium text-on-surface">Thariq Assistant</span>
                 <span className="w-1.5 h-1.5 rounded-full bg-tertiary-container"></span>
               </div>
-              <span className="font-label-sm text-label-sm text-secondary">Answers only from Thariq&apos;s documents</span>
+              {/* body font, not mono: it is shorter, so it stays on one line on most phones */}
+              <span className="font-body-sm text-[12px] leading-4 text-secondary">Answers only from Thariq&apos;s documents</span>
             </div>
           </div>
           <button
@@ -282,14 +289,14 @@ export default function ChatWidget() {
         {/* Messages */}
         <div
           ref={listRef}
-          className="flex-1 overflow-y-auto px-space-md py-space-md flex flex-col gap-3 min-h-[260px] font-body-sm text-body-sm md:p-4 md:gap-4 md:min-h-0"
+          className="flex-1 overflow-y-auto overscroll-contain px-space-md py-3 flex flex-col gap-3 min-h-[min(260px,35vh)] font-body-sm text-body-sm md:p-4 md:gap-4 md:min-h-0"
         >
           {messages.length === 0 && (
             <div className="flex flex-col gap-3 md:gap-4 md:pt-2">
-              <div className="self-start max-w-[88%] md:max-w-[90%] p-3.5 rounded-2xl rounded-tl-sm md:rounded-tl-2xl bg-surface-container md:bg-surface-container-low text-on-surface font-body-sm text-body-sm shadow-sm md:shadow-none">
-                <p>Hello! I&apos;m Thariq&apos;s assistant. I only answer from his documents: his CV, FundsApp, Career AI and an FAQ.</p>
+              <div className="self-start max-w-[88%] md:max-w-[90%] p-3 md:p-3.5 rounded-2xl rounded-tl-sm md:rounded-tl-2xl bg-surface-container md:bg-surface-container-low text-on-surface font-body-sm text-body-sm shadow-sm md:shadow-none">
+                <p>Hi! I&apos;m Thariq&apos;s assistant. I only answer from his documents.</p>
               </div>
-              <div className="flex flex-col gap-2 md:pt-1">
+              <div className="flex flex-col gap-1.5 md:gap-2 md:pt-1">
                 <span className="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Suggested queries:</span>
                 {SUGGESTIONS.map((s, i) => (
                   <button
@@ -297,7 +304,7 @@ export default function ChatWidget() {
                     onClick={() => send(s)}
                     type="button"
                     style={{ animationDelay: `${i * 80}ms` }}
-                    className="animate-message-in text-left p-3 md:p-2.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-body-sm text-body-sm md:font-label-sm md:text-label-sm transition-colors flex items-center justify-between"
+                    className="animate-message-in text-left p-2.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-body-sm text-body-sm md:font-label-sm md:text-label-sm transition-colors flex items-center justify-between"
                   >
                     <span>&ldquo;{s}&rdquo;</span>
                     <Icon name="arrow_forward" className="text-[14px]" />
@@ -389,7 +396,7 @@ export default function ChatWidget() {
         </div>
 
         {/* Input. A form means Enter sends. */}
-        <div className="p-space-md bg-surface-container-low flex flex-col gap-1 pb-[max(1.25rem,env(safe-area-inset-bottom))] shrink-0 md:p-3 md:border-t md:border-surface-container-highest">
+        <div className="px-4 pt-3 bg-surface-container-low flex flex-col gap-1 pb-[max(0.75rem,env(safe-area-inset-bottom))] shrink-0 md:p-3 md:border-t md:border-surface-container-highest">
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -402,8 +409,8 @@ export default function ChatWidget() {
               value={input}
               maxLength={MAX_LENGTH}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask about Thariq's stack or projects..."
-              className="flex-1 h-11 px-3.5 rounded-xl bg-surface text-on-surface placeholder:text-secondary text-base shadow-inner outline-none focus:ring-1 focus:ring-on-surface transition-all min-w-0 md:w-full md:h-auto md:pr-20 md:py-2.5 md:text-body-sm md:shadow-none"
+              placeholder="Ask about Thariq's work..."
+              className="flex-1 h-11 px-3.5 rounded-xl bg-surface border border-surface-container-highest text-on-surface placeholder:text-secondary placeholder:text-[13px] text-base outline-none focus:border-on-surface focus:ring-1 focus:ring-on-surface transition-all min-w-0 md:w-full md:h-auto md:pr-20 md:py-2.5 md:text-body-sm md:border-0"
             />
             <div className="flex items-center gap-1.5 md:absolute md:right-2">
               <span className="hidden md:inline font-label-sm text-[10px] text-secondary">{input.length}/{MAX_LENGTH}</span>
@@ -411,13 +418,14 @@ export default function ChatWidget() {
                 type="submit"
                 aria-label="Send message"
                 disabled={loading || !input.trim()}
-                className="w-11 h-11 rounded-xl bg-primary-container text-on-primary flex items-center justify-center shrink-0 active:scale-95 transition-transform shadow-sm hover:bg-primary disabled:opacity-40 md:w-7 md:h-7 md:rounded-lg md:active:scale-100 md:shadow-none md:transition-colors"
+                className="w-11 h-11 rounded-xl bg-primary-container text-on-primary flex items-center justify-center shrink-0 active:scale-95 transition-all shadow-sm enabled:hover:bg-primary disabled:bg-surface-container-highest disabled:text-secondary disabled:shadow-none disabled:active:scale-100 md:w-7 md:h-7 md:rounded-lg md:active:scale-100 md:shadow-none"
               >
                 <Icon name="arrow_upward" className="text-[19px] md:text-[16px]" />
               </button>
             </div>
           </form>
-          <div className="flex items-center justify-between px-1 pt-1 md:hidden">
+          {/* hidden on short screens (under 600px tall), where every pixel is needed for the conversation */}
+          <div className="flex items-center justify-between px-1 pt-1 md:hidden [@media(max-height:600px)]:hidden">
             <span className="font-label-sm text-label-sm text-secondary">Document-grounded RAG agent</span>
             <span className="font-label-sm text-label-sm text-secondary font-mono">{input.length}/{MAX_LENGTH}</span>
           </div>

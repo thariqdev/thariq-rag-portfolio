@@ -208,6 +208,27 @@
   --animate-message-in: message-in 0.3s ease-out both;
 }
 
+/* ---- Tablets (768px to 1023px) ----
+   These widths get the desktop layout, but the desktop type sizes are too big here (the name wraps,
+   the headings fill the screen). So the type scale steps down one notch. Phones (below 768px) and
+   laptops (1024px and up) are not affected. Only the sizes change; the design's spacing stays. */
+@media (min-width: 48rem) and (max-width: 63.999rem) {
+  :root {
+    --text-display: 44px;
+    --text-display--line-height: 52px;
+    --text-headline-lg: 32px;
+    --text-headline-lg--line-height: 40px;
+    --text-headline-md: 24px;
+    --text-headline-md--line-height: 32px;
+    --text-headline-sm: 20px;
+    --text-headline-sm--line-height: 28px;
+    --text-body-lg: 16px;
+    --text-body-lg--line-height: 26px;
+    --text-body-md: 14px;
+    --text-body-md--line-height: 22px;
+  }
+}
+
 /* ---- Base styles from the design ---- */
 html {
   scroll-behavior: smooth; /* the design's scroll-smooth */

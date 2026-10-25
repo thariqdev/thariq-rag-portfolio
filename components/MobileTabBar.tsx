@@ -1,15 +1,21 @@
+"use client";
+
 import Icon from "./Icon";
+import { useActiveSection, type SectionId } from "./useActiveSection";
 
 // Bottom tab bar, phones only. The design had Notes and About tabs, but this page has no such
 // sections, so those two tabs jump to Skills and Contact instead.
-const TABS = [
-  { icon: "auto_stories", label: "Index", href: "#top", active: true },
-  { icon: "terminal", label: "Works", href: "#work", active: false },
-  { icon: "history_edu", label: "Skills", href: "#skills", active: false },
-  { icon: "badge", label: "Contact", href: "#contact", active: false },
+// The highlighted tab follows the section you are looking at.
+const TABS: { icon: string; label: string; href: string; id: SectionId }[] = [
+  { icon: "auto_stories", label: "Index", href: "#top", id: "top" },
+  { icon: "terminal", label: "Works", href: "#work", id: "work" },
+  { icon: "history_edu", label: "Skills", href: "#skills", id: "skills" },
+  { icon: "badge", label: "Contact", href: "#contact", id: "contact" },
 ];
 
 export default function MobileTabBar() {
+  const active = useActiveSection();
+
   return (
     <nav className="fixed bottom-0 z-50 w-full bg-surface/90 pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_20px_rgba(27,26,23,0.04)] backdrop-blur-xl md:hidden">
       <div className="mx-auto flex h-16 max-w-md items-center justify-around px-margin">
@@ -17,8 +23,9 @@ export default function MobileTabBar() {
           <a
             key={tab.label}
             href={tab.href}
+            aria-current={active === tab.id ? "location" : undefined}
             className={`flex min-h-[44px] min-w-[56px] flex-col items-center justify-center gap-0.5 transition-colors ${
-              tab.active ? "text-primary" : "text-secondary hover:text-on-surface"
+              active === tab.id ? "text-primary" : "text-secondary hover:text-on-surface"
             }`}
           >
             <Icon name={tab.icon} className="text-[20px]" />
