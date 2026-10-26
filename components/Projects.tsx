@@ -64,7 +64,7 @@ export default function Projects() {
             <div className="p-3.5 rounded-xl bg-surface-container mb-4">
               <div className="font-label-sm text-label-sm text-secondary mb-1.5 uppercase tracking-wide">Thariq&apos;s Role</div>
               <p className="font-body-sm text-body-sm text-on-surface">
-                Software Engineer at Evoqins Pvt Ltd. Most of his work was frontend, using React and Next.js. He also contributed to the Python backend.
+                Software Engineer at Evoqins Pvt Ltd. He worked on the backend only, using Python, FastAPI, SQLAlchemy and PostgreSQL, and built and worked with 15+ REST APIs.
               </p>
             </div>
             <div className="flex flex-wrap gap-1.5 pt-1">

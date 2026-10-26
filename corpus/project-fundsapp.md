@@ -6,14 +6,14 @@ Users sign up, complete KYC, get a risk profile, and then invest, including thro
 Thariq worked on it at Evoqins Pvt Ltd.
 
 ## Thariq's role
-Thariq was a Software Engineer on FundsApp.
-Most of his work was frontend, using React and Next.js.
-He worked on onboarding, KYC, investments and SIP management.
-He also contributed to the Python backend.
+Thariq was a Software Engineer on FundsApp at Evoqins Pvt Ltd.
+He worked on the backend only, using Python, FastAPI, SQLAlchemy and PostgreSQL.
 He built and worked with 15+ REST APIs.
+He worked on onboarding, authentication, KYC, investments and SIP management.
+He did not work on the FundsApp frontend. His frontend work at Evoqins was on Rudo and Rayi.
 
 ## Tech stack
-The frontend uses React and Next.js.
+The frontend uses React and Next.js. Thariq did not work on it.
 The backend uses Python and FastAPI.
 The database is PostgreSQL, accessed through SQLAlchemy.
 Authentication uses JWT.
