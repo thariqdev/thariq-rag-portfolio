@@ -3,6 +3,10 @@
 ## Where is Thariq based?
 Thariq is based in Dubai, UAE.
 
+## How many years of experience does Thariq have?
+Thariq has 3 years of professional experience.
+He worked at Asian Media Group from September 2023 and at Evoqins Pvt Ltd from September 2024 to August 2026.
+
 ## Is Thariq available to start?
 Yes. Thariq is available to join immediately.
 

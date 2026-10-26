@@ -4,7 +4,7 @@
 A one-page personal site with a chat assistant, "Talk to Thariq".
 It answers questions from my own documents using RAG.
 It must say "I don't know" when the answer is not in the documents.
-Built for the HireStella AI Developer assessment. Deadline: [ADD DATE/TIME].
+Built for the HireStella AI Developer assessment. Deadline: Monday 1:00 PM (3 days after Friday 1:00 PM).
 
 ## Stack
 - Next.js App Router, TypeScript, Tailwind

@@ -3,6 +3,7 @@
 ## Overview
 Career AI is a full stack web app built by Thariq.
 It helps with job search: skills, job matching, interview prep and application tracking.
+It includes a RAG assistant.
 The code is public at github.com/thariqdev/career-ai.
 
 ## Tech stack

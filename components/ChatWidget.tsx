@@ -129,6 +129,9 @@ export default function ChatWidget() {
   async function send(question: string) {
     const q = question.trim();
     if (!q || loading) return; // loading check blocks double submit
+    // Memory: the last 4 messages (2 turns) go along, so follow-ups like "what about his role?" make sense.
+    // Error bubbles are not part of the conversation.
+    const history = messages.filter((m) => !m.isError).slice(-4).map((m) => ({ role: m.role, text: m.text }));
     setMessages((m) => [...m, { role: "user", text: q }]);
     setInput("");
     setLoading(true);
@@ -141,7 +144,7 @@ export default function ChatWidget() {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question: q }),
+        body: JSON.stringify({ question: q, history }),
         signal: controller.signal,
       });
       // The reply may not be JSON (for example an error page from the host), so read it carefully.

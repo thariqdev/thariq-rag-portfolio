@@ -8,6 +8,7 @@ Thariq worked on it at Evoqins Pvt Ltd.
 ## Thariq's role
 Thariq was a Software Engineer on FundsApp.
 Most of his work was frontend, using React and Next.js.
+He worked on onboarding, KYC, investments and SIP management.
 He also contributed to the Python backend.
 He built and worked with 15+ REST APIs.
 
