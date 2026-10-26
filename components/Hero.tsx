@@ -74,7 +74,7 @@ export default function Hero() {
           <OpenChatButton
             icon="chat_bubble"
             iconClassName="text-[19px]"
-            className="flex-1 max-[339px]:flex-none whitespace-nowrap flex items-center justify-center gap-2 h-12 px-space-md rounded-xl bg-primary-container text-on-primary font-body-md text-body-md font-medium shadow-sm active:scale-[0.98] transition-all"
+            className="flex-1 max-[339px]:flex-none whitespace-nowrap flex items-center justify-center gap-2 h-12 px-space-md rounded-xl bg-primary-strong text-on-primary font-body-md text-body-md font-medium shadow-sm active:scale-[0.98] transition-all"
           />
           <a
             className="whitespace-nowrap flex items-center justify-center gap-2 h-12 px-space-md rounded-xl bg-surface-container text-on-surface font-body-md text-body-md font-medium active:scale-[0.98] transition-all"
@@ -128,7 +128,7 @@ export default function Hero() {
                 icon="forum"
                 iconClassName="text-[19px] group-hover:rotate-6 transition-transform"
                 labelClassName="font-label-md text-label-md uppercase tracking-wider whitespace-nowrap"
-                className="group px-6 py-3.5 rounded-xl bg-primary-container hover:bg-primary transition-all duration-200 text-on-primary font-medium flex items-center gap-2.5 shadow-md active:scale-[0.98]"
+                className="group px-6 py-3.5 rounded-xl bg-primary-strong hover:bg-primary transition-all duration-200 text-on-primary font-medium flex items-center gap-2.5 shadow-md active:scale-[0.98]"
               />
               <a
                 className="px-5 py-3.5 rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors duration-150 text-on-surface font-medium flex items-center gap-2"

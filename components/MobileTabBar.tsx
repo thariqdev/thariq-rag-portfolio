@@ -17,7 +17,7 @@ export default function MobileTabBar() {
   const active = useActiveSection();
 
   return (
-    <nav className="fixed bottom-0 z-50 w-full bg-surface/90 pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_20px_rgba(27,26,23,0.04)] backdrop-blur-xl md:hidden">
+    <nav aria-label="Page sections" className="fixed bottom-0 z-50 w-full bg-surface/90 pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_20px_rgba(27,26,23,0.04)] backdrop-blur-xl md:hidden">
       <div className="mx-auto flex h-16 max-w-md items-center justify-around px-margin">
         {TABS.map((tab) => (
           <a

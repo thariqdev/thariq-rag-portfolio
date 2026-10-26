@@ -36,7 +36,7 @@ export default function SiteHeader() {
 
         <div className="flex items-center gap-space-lg">
           {/* The link for the section you are looking at gets the coral underline (as the design's "Work" does) */}
-          <nav className="hidden items-center gap-space-lg font-label text-label-md uppercase tracking-wider md:flex">
+          <nav aria-label="Page sections" className="hidden items-center gap-space-lg font-label text-label-md uppercase tracking-wider md:flex">
             {NAV.map((link) => (
               <a
                 key={link.id}

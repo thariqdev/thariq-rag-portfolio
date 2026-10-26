@@ -1,6 +1,7 @@
 // Model name from Google's current docs (checked 2026-10-25).
 const MODEL = "gemini-embedding-2";
 const URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:batchEmbedContents`;
+const TIMEOUT_MS = 8000; // without a limit, a stuck request would hold the whole chat
 
 // Turn each text into a vector (a list of numbers).
 export async function embedTexts(texts: string[]): Promise<number[][]> {
@@ -15,6 +16,7 @@ export async function embedTexts(texts: string[]): Promise<number[][]> {
 
   const res = await fetch(URL, {
     method: "POST",
+    signal: AbortSignal.timeout(TIMEOUT_MS),
     headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
     body: JSON.stringify({ requests }),
   });

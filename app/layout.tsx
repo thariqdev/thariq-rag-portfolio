@@ -34,15 +34,26 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${newsreader.variable} ${jakarta.variable} ${jetbrains.variable} h-full antialiased`}
     >
       <head>
-        {/* The design's icon font (Material Symbols). It is a font file, not an npm package. */}
+        {/* The design's icon font (Material Symbols). It is a font file, not an npm package.
+            It loads from Google's server. The two lint warnings below are accepted on purpose:
+            display=block hides the icon names until the font is ready (swap would show the words
+            "arrow_forward" for a moment), and a layout is the right place for a font used on every page. */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        {/* eslint-disable-next-line @next/next/google-font-display, @next/next/no-page-custom-font */}
         <link
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block"
         />
       </head>
       <body className="min-h-full flex flex-col">
+        {/* Skip link: invisible until a keyboard user presses Tab, then it jumps past the header */}
+        <a
+          href="#top"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[70] focus:rounded-lg focus:bg-surface focus:px-4 focus:py-3 focus:text-body-sm focus:font-medium focus:text-on-surface focus:shadow-lg"
+        >
+          Skip to content
+        </a>
         {children}
         <ChatWidget />
       </body>

@@ -36,6 +36,9 @@
   --color-outline-variant: #e3beb6;
   --color-primary: #b52603;
   --color-primary-container: #ff5a36;
+  /* Not in the design. A slightly deeper coral for buttons and bubbles that carry white text:
+     white on #ff5a36 is only 3.1:1 (needs 4.5:1), white on #d63f1d is 4.6:1. */
+  --color-primary-strong: #d63f1d;
   --color-primary-fixed: #ffdad2;
   --color-primary-fixed-dim: #ffb4a3;
   --color-secondary: #605e5a;

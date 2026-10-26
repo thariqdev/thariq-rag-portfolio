@@ -9,7 +9,7 @@ Built for the HireStella AI Developer assessment. Deadline: [ADD DATE/TIME].
 ## Stack
 - Next.js App Router, TypeScript, Tailwind
 - Hosting: Vercel Hobby (free)
-- LLM: Gemini Flash (free), fallback Groq
+- LLM: Groq gpt-oss-20b first (it is fast), Gemini Flash as the fallback (both free)
 - Embeddings: Gemini embeddings
 - Vector store: JSON file (`data/vectors.json`), cosine similarity in memory
 - Zero budget. Free tiers only.

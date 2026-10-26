@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Fragment, useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Icon from "./Icon";
 
 type Message = { role: "user" | "assistant"; text: string; sources?: string[]; isError?: boolean };
@@ -12,10 +12,24 @@ const SUGGESTIONS = [
 ];
 
 const MAX_LENGTH = 250;
+const REQUEST_TIMEOUT_MS = 35000; // a little longer than the server's slowest case (about 30 seconds)
 
 // An answer that starts like this means "it is not in the documents". It gets a calm card, not an error.
-const REFUSAL = /^\s*i (don't|do not) (know|have)/i;
+const REFUSAL = /^\s*i (don't|do not) (know|have)|^\s*i can only answer/i;
 const CONTACT_EMAIL = "thariqmohammed0310@gmail.com"; // public email, from corpus/cv.md
+
+// True on phone-sized screens (under 768px). useSyncExternalStore is React's tool for reading browser values like this.
+function usePhone() {
+  return useSyncExternalStore(
+    (notify) => {
+      const query = window.matchMedia("(max-width: 47.99rem)");
+      query.addEventListener("change", notify);
+      return () => query.removeEventListener("change", notify);
+    },
+    () => window.matchMedia("(max-width: 47.99rem)").matches,
+    () => false, // on the server we do not know the screen size
+  );
+}
 
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
@@ -31,22 +45,39 @@ export default function ChatWidget() {
   // "shown" = it is in its open position (so the CSS transition has something to move to).
   const [mounted, setMounted] = useState(false);
   const [shown, setShown] = useState(false);
-  useEffect(() => {
-    if (open) {
-      setMounted(true);
-      // two frames, so the closed position is painted first and the transition can run
-      let second = 0;
-      const first = requestAnimationFrame(() => {
-        second = requestAnimationFrame(() => setShown(true));
-      });
-      return () => {
-        cancelAnimationFrame(first);
-        cancelAnimationFrame(second);
-      };
-    }
+  const isPhone = usePhone();
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const launcherPhoneRef = useRef<HTMLButtonElement>(null);
+  const launcherDesktopRef = useRef<HTMLButtonElement>(null);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hasOpened = useRef(false);
+
+  // Opening and closing happen in these two functions (not in effects), which keeps the state simple.
+  const openPanel = useCallback(() => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    hasOpened.current = true;
+    setGreeting("dismissed"); // opening the chat dismisses the greeting bubble for good, as in the design
+    setMounted(true);
+    setOpen(true);
+  }, []);
+
+  const closePanel = useCallback(() => {
+    setOpen(false);
     setShown(false);
-    const t = setTimeout(() => setMounted(false), 300); // the design's duration-300
-    return () => clearTimeout(t);
+    closeTimer.current = setTimeout(() => setMounted(false), 300); // the design's duration-300
+  }, []);
+
+  // Once the panel is in the page, wait two frames, so the closed position is painted first and the transition can run.
+  useEffect(() => {
+    if (!open) return;
+    let second = 0;
+    const first = requestAnimationFrame(() => {
+      second = requestAnimationFrame(() => setShown(true));
+    });
+    return () => {
+      cancelAnimationFrame(first);
+      cancelAnimationFrame(second);
+    };
   }, [open]);
 
   // When the panel opens with no messages yet, start at the top, so the greeting is never cut off.
@@ -54,11 +85,20 @@ export default function ChatWidget() {
     if (shown && messages.length === 0) listRef.current?.scrollTo({ top: 0 });
   }, [shown, messages.length]);
 
-  // Focus the input when the card opens on desktop (the design does this). Not on phones: it would
-  // pop the keyboard up and hide the conversation.
+  // When the panel opens, move keyboard focus into it. Desktop: the input box. Phone: the panel itself, because
+  // focusing the input would pop the keyboard up and hide the conversation.
   useEffect(() => {
-    if (shown && window.matchMedia("(min-width: 48rem)").matches) inputRef.current?.focus();
-  }, [shown]);
+    if (!shown) return;
+    if (isPhone) dialogRef.current?.focus();
+    else inputRef.current?.focus();
+  }, [shown, isPhone]);
+
+  // When the panel has closed, give keyboard focus back to the launcher button, so keyboard users do not lose their place.
+  useEffect(() => {
+    if (open || mounted || !hasOpened.current) return;
+    hasOpened.current = false;
+    (isPhone ? launcherPhoneRef : launcherDesktopRef).current?.focus();
+  }, [open, mounted, isPhone]);
 
   // Fade the greeting bubble in 1 second after load. The design only says "fade-in", with no delay,
   // so the 1 second is my choice.
@@ -67,25 +107,19 @@ export default function ChatWidget() {
     return () => clearTimeout(t);
   }, []);
 
-  // Opening the chat dismisses the bubble for good (the design hides it when the chat opens).
-  useEffect(() => {
-    if (open) setGreeting("dismissed");
-  }, [open]);
-
   // The hero button sends an "open-chat" event to open this panel.
   useEffect(() => {
-    const onOpen = () => setOpen(true);
-    window.addEventListener("open-chat", onOpen);
-    return () => window.removeEventListener("open-chat", onOpen);
-  }, []);
+    window.addEventListener("open-chat", openPanel);
+    return () => window.removeEventListener("open-chat", openPanel);
+  }, [openPanel]);
 
   // Escape closes the panel.
   useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && closePanel();
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [open]);
+  }, [open, closePanel]);
 
   // Keep the newest message in view.
   useEffect(() => {
@@ -99,22 +133,38 @@ export default function ChatWidget() {
     setInput("");
     setLoading(true);
 
+    // If the server never answers, give up after a while instead of showing "Thinking..." forever.
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ question: q }),
+        signal: controller.signal,
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Something went wrong.");
+      // The reply may not be JSON (for example an error page from the host), so read it carefully.
+      let data: { answer?: unknown; error?: unknown; sources?: { source: string }[] } | null = null;
+      try {
+        data = await res.json();
+      } catch {}
+      if (!res.ok) {
+        throw new Error(typeof data?.error === "string" ? data.error : "The assistant is not available right now. Please try again.");
+      }
+      if (typeof data?.answer !== "string") throw new Error("The assistant sent a reply that could not be read. Please try again.");
       // Show each file name once.
-      const sources = [...new Set<string>(data.sources.map((s: { source: string }) => s.source))];
-      setMessages((m) => [...m, { role: "assistant", text: data.answer, sources }]);
+      const sources = [...new Set<string>((data.sources ?? []).map((s) => s.source))];
+      setMessages((m) => [...m, { role: "assistant", text: data.answer as string, sources }]);
     } catch (err) {
-      // The server sends friendly messages (including rate limits). A network failure has its own.
-      const text = err instanceof TypeError ? "Could not reach the server. Please check your connection." : (err as Error).message;
+      // The server sends friendly messages (including rate limits). A timeout and a network failure have their own.
+      let text: string;
+      if (err instanceof DOMException && err.name === "AbortError") text = "This is taking too long. Please try again.";
+      else if (err instanceof TypeError) text = "Could not reach the server. Please check your connection.";
+      else text = (err as Error).message;
       setMessages((m) => [...m, { role: "assistant", text, isError: true }]);
     } finally {
+      clearTimeout(timer);
       setLoading(false);
     }
   }
@@ -153,12 +203,13 @@ export default function ChatWidget() {
             </button>
           </div>
           <button
+            ref={launcherPhoneRef}
             className="pointer-events-auto flex items-center gap-2.5 h-12 pl-3.5 pr-4 rounded-full bg-inverse-surface text-inverse-on-surface shadow-[0_12px_32px_-4px_rgba(27,26,23,0.2)] active:scale-95 transition-transform"
-            onClick={() => setOpen(true)}
+            onClick={openPanel}
             aria-label="Open AI Assistant"
             type="button"
           >
-            <div className="relative flex items-center justify-center w-6 h-6 rounded-full bg-primary-container text-on-primary font-label-sm text-label-sm font-semibold">
+            <div className="relative flex items-center justify-center w-6 h-6 rounded-full bg-primary-strong text-on-primary font-label-sm text-label-sm font-semibold">
               MT
               <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-tertiary-container ring-1 ring-inverse-surface"></span>
             </div>
@@ -187,12 +238,13 @@ export default function ChatWidget() {
             </button>
           </div>
           <button
+            ref={launcherDesktopRef}
             className="pointer-events-auto group relative flex items-center gap-3 pl-3.5 pr-4 py-3 rounded-full bg-inverse-surface text-inverse-on-surface shadow-[0_12px_32px_-4px_rgba(27,26,23,0.18)] hover:bg-on-surface transition-all active:scale-[0.98]"
-            onClick={() => setOpen(true)}
+            onClick={openPanel}
             aria-label="Open AI Assistant"
             type="button"
           >
-            <div className="relative w-8 h-8 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-headline-sm text-xs font-bold">
+            <div className="relative w-8 h-8 rounded-full bg-primary-strong text-on-primary flex items-center justify-center font-headline-sm text-xs font-bold">
               MT
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-container opacity-50"></span>
             </div>
@@ -211,6 +263,23 @@ export default function ChatWidget() {
   // Phone: bottom sheet, max 75% of the screen, with a dimmed backdrop. Desktop: floating card.
   // Open/close: the sheet slides up/down (design: transition-transform duration-300 ease-out). The desktop
   // card scales and fades (design: transition-all duration-300, origin-bottom-right).
+  // On a phone the sheet covers the page with a dimmed backdrop, so Tab must stay inside it.
+  function keepTabInside(e: React.KeyboardEvent<HTMLDivElement>) {
+    if (e.key !== "Tab" || !isPhone) return;
+    const items = [...e.currentTarget.querySelectorAll<HTMLElement>("button:not([disabled]), input:not([disabled]), a[href]")].filter((el) => el.getClientRects().length);
+    if (!items.length) return;
+    const first = items[0];
+    const last = items[items.length - 1];
+    const active = document.activeElement;
+    if (e.shiftKey && (active === first || active === e.currentTarget)) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && active === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  }
+
   const panelPosition = shown
     ? "translate-y-0 md:scale-100 md:opacity-100"
     : "translate-y-full md:translate-y-0 md:scale-95 md:opacity-0 pointer-events-none";
@@ -219,7 +288,7 @@ export default function ChatWidget() {
     <Fragment key="panel">
       {/* Dimmed backdrop (phones only). Tapping it closes the sheet. */}
       <div
-        onClick={() => setOpen(false)}
+        onClick={closePanel}
         aria-hidden="true"
         className={`fixed inset-0 z-50 bg-inverse-surface/35 backdrop-blur-sm transition-opacity duration-300 md:hidden ${
           shown ? "opacity-100" : "opacity-0 pointer-events-none"
@@ -227,13 +296,17 @@ export default function ChatWidget() {
       />
 
       <div
+        ref={dialogRef}
         role="dialog"
         aria-label="Chat with Thariq"
-        className={`fixed left-0 right-0 bottom-0 z-50 flex flex-col max-h-[75vh] w-full max-w-lg mx-auto rounded-t-3xl bg-surface overflow-hidden shadow-[0_-12px_40px_rgba(27,26,23,0.18)] transition-all duration-300 ease-out transform md:ease-in-out md:left-auto md:right-6 md:bottom-6 md:mx-0 md:h-[560px] md:max-h-[calc(100vh-3rem)] md:w-[380px] md:max-w-none md:rounded-2xl md:border md:border-surface-container-highest md:shadow-[0_16px_40px_-6px_rgba(27,26,23,0.18)] md:origin-bottom-right ${panelPosition}`}
+        aria-modal={isPhone}
+        tabIndex={-1}
+        onKeyDown={keepTabInside}
+        className={`outline-none fixed left-0 right-0 bottom-0 z-50 flex flex-col max-h-[75vh] w-full max-w-lg mx-auto rounded-t-3xl bg-surface overflow-hidden shadow-[0_-12px_40px_rgba(27,26,23,0.18)] transition-all duration-300 ease-out transform md:ease-in-out md:left-auto md:right-6 md:bottom-6 md:mx-0 md:h-[560px] md:max-h-[calc(100vh-3rem)] md:w-[380px] md:max-w-none md:rounded-2xl md:border md:border-surface-container-highest md:shadow-[0_16px_40px_-6px_rgba(27,26,23,0.18)] md:origin-bottom-right ${panelPosition}`}
       >
         {/* Drag handle (phone). Tapping it closes the sheet. */}
         <button
-          onClick={() => setOpen(false)}
+          onClick={closePanel}
           aria-label="Close chat"
           type="button"
           className="w-full pt-2.5 pb-0.5 flex justify-center cursor-pointer shrink-0 md:hidden"
@@ -244,7 +317,7 @@ export default function ChatWidget() {
         {/* Header: phone */}
         <div className="px-space-md py-2 flex items-center justify-between border-b-0 bg-surface shrink-0 md:hidden">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-label-sm text-label-sm font-bold">MT</div>
+            <div className="w-8 h-8 rounded-full bg-primary-strong text-on-primary flex items-center justify-center font-label-sm text-label-sm font-bold">MT</div>
             <div className="flex flex-col">
               <div className="flex items-center gap-1.5">
                 <span className="font-body-sm text-body-sm font-medium text-on-surface">Thariq Assistant</span>
@@ -255,7 +328,7 @@ export default function ChatWidget() {
             </div>
           </div>
           <button
-            onClick={() => setOpen(false)}
+            onClick={closePanel}
             aria-label="Close chat"
             type="button"
             className="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-on-surface"
@@ -277,7 +350,7 @@ export default function ChatWidget() {
             </div>
           </div>
           <button
-            onClick={() => setOpen(false)}
+            onClick={closePanel}
             aria-label="Close chat"
             type="button"
             className="w-8 h-8 rounded-full flex items-center justify-center text-secondary hover:text-on-surface hover:bg-surface-container transition-colors"
@@ -289,7 +362,10 @@ export default function ChatWidget() {
         {/* Messages */}
         <div
           ref={listRef}
-          className="flex-1 overflow-y-auto overscroll-contain px-space-md py-3 flex flex-col gap-3 min-h-[min(260px,35vh)] font-body-sm text-body-sm md:p-4 md:gap-4 md:min-h-0"
+          role="log"
+          aria-label="Conversation"
+          aria-live="polite"
+          className="flex-1 overflow-y-auto overflow-x-hidden overscroll-contain px-space-md py-3 flex flex-col gap-3 min-h-[min(260px,35vh)] font-body-sm text-body-sm md:p-4 md:gap-4 md:min-h-0"
         >
           {messages.length === 0 && (
             <div className="flex flex-col gap-3 md:gap-4 md:pt-2">
@@ -320,7 +396,7 @@ export default function ChatWidget() {
               return (
                 <div
                   key={i}
-                  className="animate-message-in self-end max-w-[85%] py-2.5 px-3 md:px-4 rounded-2xl rounded-tr-sm md:rounded-tr-2xl bg-primary-container text-on-primary font-body-sm text-body-sm shadow-sm md:shadow-none whitespace-pre-wrap"
+                  className="animate-message-in self-end max-w-[85%] py-2.5 px-3 md:px-4 rounded-2xl rounded-tr-sm md:rounded-tr-2xl bg-primary-strong text-on-primary font-body-sm text-body-sm shadow-sm md:shadow-none whitespace-pre-wrap [overflow-wrap:anywhere]"
                 >
                   {m.text}
                 </div>
@@ -335,7 +411,7 @@ export default function ChatWidget() {
                     <Icon name="error" className="text-[18px]" />
                     <span className="font-label-sm text-label-sm uppercase font-semibold">Couldn&apos;t get an answer</span>
                   </div>
-                  <p className="font-body-sm text-body-sm">{m.text}</p>
+                  <p className="font-body-sm text-body-sm [overflow-wrap:anywhere]">{m.text}</p>
                 </div>
               );
             }
@@ -352,7 +428,7 @@ export default function ChatWidget() {
                     <Icon name="search_off" className="text-[16px]" />
                     <span className="font-label-sm text-label-sm uppercase font-semibold">Not in my documents</span>
                   </div>
-                  <p className="font-body-sm text-body-sm leading-relaxed text-on-surface whitespace-pre-wrap">{m.text}</p>
+                  <p className="font-body-sm text-body-sm leading-relaxed text-on-surface whitespace-pre-wrap [overflow-wrap:anywhere]">{m.text}</p>
                   <p className="font-body-sm text-body-sm text-secondary">
                     For other questions, you can reach him at{" "}
                     <a className="font-medium text-primary hover:underline" href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
@@ -367,7 +443,7 @@ export default function ChatWidget() {
                 key={i}
                 className="animate-message-in self-start max-w-[92%] md:max-w-[95%] p-3.5 md:p-4 rounded-2xl rounded-tl-sm md:rounded-tl-2xl bg-surface-container md:bg-surface-container-low text-on-surface flex flex-col gap-2 md:gap-3 shadow-sm md:shadow-none"
               >
-                <p className="font-body-sm text-body-sm leading-relaxed whitespace-pre-wrap">{m.text}</p>
+                <p className="font-body-sm text-body-sm leading-relaxed whitespace-pre-wrap [overflow-wrap:anywhere]">{m.text}</p>
                 {m.sources && m.sources.length > 0 && (
                   <div className="flex flex-wrap items-center gap-1.5 pt-1 md:pt-2 md:border-t md:border-surface-container-highest">
                     <span className="font-label-sm text-label-sm text-secondary uppercase font-mono">Sources:</span>
@@ -418,7 +494,7 @@ export default function ChatWidget() {
                 type="submit"
                 aria-label="Send message"
                 disabled={loading || !input.trim()}
-                className="w-11 h-11 rounded-xl bg-primary-container text-on-primary flex items-center justify-center shrink-0 active:scale-95 transition-all shadow-sm enabled:hover:bg-primary disabled:bg-surface-container-highest disabled:text-secondary disabled:shadow-none disabled:active:scale-100 md:w-7 md:h-7 md:rounded-lg md:active:scale-100 md:shadow-none"
+                className="w-11 h-11 rounded-xl bg-primary-strong text-on-primary flex items-center justify-center shrink-0 active:scale-95 transition-all shadow-sm enabled:hover:bg-primary disabled:bg-surface-container-highest disabled:text-secondary disabled:shadow-none disabled:active:scale-100 md:w-7 md:h-7 md:rounded-lg md:active:scale-100 md:shadow-none"
               >
                 <Icon name="arrow_upward" className="text-[19px] md:text-[16px]" />
               </button>
