@@ -61,11 +61,12 @@ This is a small test:
 - It checks keywords, not meaning.
 - It is not proof that the assistant is always right.
 
-I once got 9/11. The FundsApp and Career AI answers were true but missed the words "KYC" and "RAG". I fixed that by adding true lines from my CV to the corpus. I did not change the tests.
+I once got 9/11. The FundsApp and Career AI answers were true but missed the words "KYC" and "RAG". I fixed that by adding true lines from my CV to the corpus. I did not change those two tests. I did change the Microsoft test, because both "No" and "I don't know" are correct answers when the documents never mention Microsoft.
 
 ## Broken or unfinished
 
 - **Eval is tiny.** 11 questions, keyword matching. A pass does not mean a correct answer.
+- **Two eval tests can pass wrongly.** The Google and Kubernetes tests look for the plain text "not", so words like "note" or "nothing" would also match. The Microsoft test matches whole words, so it is safe.
 - **Wording varies between runs.** The same question can come back in different words. A keyword test can pass one run and fail the next.
 - **Small wording slips.** The model sometimes says "built and maintained" where my documents say "built and worked with".
 - **No streaming.** The answer appears all at once.
