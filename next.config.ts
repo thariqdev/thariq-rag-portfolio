@@ -5,6 +5,8 @@ const nextConfig: NextConfig = {
     // Added by create-next-app. It only works in `next dev`: it writes notes (see AGENTS.md) that help AI
     // coding tools report Next.js bugs. It has no effect on the site itself.
     agentFeedback: true,
+    // Set by `next upgrade --agent=security`.
+    agentUpgrade: "security",
   },
   // Next 16's caching model, added by create-next-app. This site has no `use cache` code, so the pages are
   // built once as plain static HTML, and /api/chat runs fresh on every request.
