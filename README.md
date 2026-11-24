@@ -94,3 +94,34 @@ Next, I would:
 ## About how I built it
 
 I used Claude (an AI tool) to help build this project. I can walk through any file and explain it.
+
+
+## Run with Docker
+
+Requires Docker Desktop.
+
+1. Copy the env template and add your own keys:
+
+   ```bash
+   cp .env.example .env.local
+   ```
+
+   Set `GEMINI_API_KEY` and `GROQ_API_KEY` in `.env.local`.
+
+2. Build the image:
+
+   ```bash
+   docker build -t thariq-rag-portfolio:1.0 .
+   ```
+
+3. Run the container:
+
+   ```bash
+   docker run -d -p 3000:3000 --name rag-portfolio --env-file .env.local thariq-rag-portfolio:1.0
+   ```
+
+4. Open http://localhost:3000
+
+Notes:
+- API keys are passed at run time and are never stored in the image.
+- Stop and remove the container with `docker rm -f rag-portfolio`.  

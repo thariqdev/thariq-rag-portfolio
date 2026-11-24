@@ -1,22 +1,26 @@
 import type { Metadata } from "next";
-import { Newsreader, Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
+import { Bricolage_Grotesque, Hanken_Grotesk, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
+import "./factsheet.css";
 import ChatWidget from "../components/ChatWidget";
 
-// The three fonts from the design. next/font is built into Next.js, so no new library.
-const newsreader = Newsreader({
-  variable: "--font-newsreader",
+// The three fonts of the factsheet design. next/font is built into Next.js, so no new library.
+// Bricolage has a width axis (wdth). The big name uses the narrow end of it.
+const bricolage = Bricolage_Grotesque({
+  variable: "--font-bricolage",
   subsets: ["latin"],
-  style: ["normal", "italic"],});
+  axes: ["opsz", "wdth"],
+});
 
-const jakarta = Plus_Jakarta_Sans({
-  variable: "--font-jakarta",
+const hanken = Hanken_Grotesk({
+  variable: "--font-hanken",
   subsets: ["latin"],
 });
 
-const jetbrains = JetBrains_Mono({
-  variable: "--font-jetbrains",
+const plex = IBM_Plex_Mono({
+  variable: "--font-plex",
   subsets: ["latin"],
+  weight: ["400", "500", "600"],
 });
 
 export const metadata: Metadata = {
@@ -31,13 +35,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       // A browser extension adds attributes to <html>; this stops the false hydration warning.
       suppressHydrationWarning
-      className={`${newsreader.variable} ${jakarta.variable} ${jetbrains.variable} h-full antialiased`}
+      className={`${bricolage.variable} ${hanken.variable} ${plex.variable} h-full antialiased`}
     >
       <head>
-        {/* The design's icon font (Material Symbols). It is a font file, not an npm package.
-            It loads from Google's server. The two lint warnings below are accepted on purpose:
-            display=block hides the icon names until the font is ready (swap would show the words
-            "arrow_forward" for a moment), and a layout is the right place for a font used on every page. */}
+        {/* The icon font (Material Symbols). The chat widget and the phone tab bar still use it.
+            It is a font file, not an npm package. It loads from Google's server. The lint warning below is
+            accepted on purpose: display=block hides the icon names until the font is ready (swap would show
+            the words "arrow_forward" for a moment), and a layout is the right place for a font used on every page. */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         {/* eslint-disable-next-line @next/next/google-font-display, @next/next/no-page-custom-font */}

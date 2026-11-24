@@ -1,109 +1,63 @@
-import Icon from "./Icon";
+import { SKILL_GROUPS } from "./siteData";
 
-// Classes are copied from design/code.html (desktop) and design/code-res.html (phone).
-// Every skill below is listed in corpus/cv.md ("Skills: Frontend", "Skills: Backend and Databases",
-// "Skills: Tools and Domain"). Rows only join cv.md skills with "&"; none are added.
-const DESKTOP_CARDS = [
-  {
-    icon: "terminal",
-    title: "Frontend",
-    sub: "Interfaces & State",
-    rows: ["React.js & Next.js", "JavaScript & TypeScript", "Redux Toolkit", "Bootstrap"],
-  },
-  {
-    icon: "database",
-    title: "Backend & Databases",
-    sub: "APIs & Data",
-    rows: ["Python & FastAPI", "REST APIs & JWT authentication", "SQLAlchemy & PostgreSQL", "Node.js & Express.js", "Database design"],
-  },
-  {
-    icon: "account_balance",
-    title: "Tools & Domain",
-    sub: "Workflow & Fintech",
-    rows: [
-      "Git & GitHub",
-      "Postman & Swagger (OpenAPI)",
-      "Agile practices",
-      "Fintech & wealth management",
-      "Mutual funds & investment platforms",
-      "KYC workflows",
-    ],
-  },
-];
+const TOTAL = SKILL_GROUPS.reduce((sum, g) => sum + g.items.length, 0);
 
-const PHONE_GROUPS = [
-  { icon: "terminal", title: "Frontend", items: ["React.js", "Next.js", "JavaScript", "TypeScript", "Redux Toolkit", "Bootstrap"] },
-  {
-    icon: "schema",
-    title: "Backend & Databases",
-    items: ["Python", "FastAPI", "REST APIs", "SQLAlchemy", "JWT authentication", "Node.js", "Express.js", "PostgreSQL", "Database design"],
-  },
-  {
-    icon: "account_balance",
-    title: "Tools & Domain",
-    items: ["Git", "GitHub", "Postman", "Swagger (OpenAPI)", "Agile practices", "Fintech", "Wealth management", "Mutual funds", "Investment platforms", "KYC workflows"],
-  },
-];
+// Donut: one arc per skill group, sized by how many skills the CV lists in that group.
+function Donut() {
+  // Each arc starts where the one before it ended. Start angles are worked out first, so nothing is reassigned.
+  const sweeps = SKILL_GROUPS.map((g) => (g.items.length / TOTAL) * 360);
+  const starts = sweeps.map((_, i) => 90 - sweeps.slice(0, i).reduce((a, b) => a + b, 0));
+  const point = (deg: number) => [110 + 80 * Math.cos((deg * Math.PI) / 180), 110 - 80 * Math.sin((deg * Math.PI) / 180)];
+  const arcs = SKILL_GROUPS.map((g, i) => {
+    const a0 = starts[i];
+    const a1 = a0 - sweeps[i] + 1.2; // small gap between arcs
+    const [x0, y0] = point(a0);
+    const [x1, y1] = point(a1);
+    const large = a0 - a1 > 180 ? 1 : 0;
+    return { name: g.name, color: g.color, d: `M${x0.toFixed(2)} ${y0.toFixed(2)} A80 80 0 ${large} 1 ${x1.toFixed(2)} ${y1.toFixed(2)}` };
+  });
+  return (
+    <svg viewBox="0 0 220 220" role="img" aria-label={`Skills by group: ${SKILL_GROUPS.map((g) => `${g.name} ${g.items.length}`).join(", ")}`}>
+      {arcs.map((a, i) => (
+        <path key={a.name} d={a.d} pathLength={100} className="fs-arc" style={{ "--i": i } as React.CSSProperties} fill="none" stroke={a.color} strokeWidth={34} />
+      ))}
+      <text x={110} y={118} textAnchor="middle" fontSize={44} fontWeight={800}>{TOTAL}</text>
+      <text x={110} y={140} textAnchor="middle" fontSize={11} fontFamily="var(--fs-mono)">SKILLS</text>
+    </svg>
+  );
+}
 
 export default function Skills() {
   return (
-    // One anchor for both layouts, so the "Skills" links always have a visible target.
-    <div id="skills" className="scroll-mt-20">
-      {/* ================= PHONE: Index / 02 (design/code-res.html) ================= */}
-      <section className="flex flex-col gap-space-md px-margin py-space-md md:hidden">
-        <div className="flex items-baseline justify-between">
-          <div className="flex items-center gap-2">
-            <span className="font-label-sm text-label-sm text-primary tracking-widest uppercase">Index / 02</span>
-            <span className="w-8 h-px bg-outline-variant"></span>
+    <section id="skills" className="fs-section">
+      <div className="fs-wrap">
+        <div className="fs-head" data-reveal>
+          <span className="fs-no">05 / ALLOCATION</span>
+          <h2 className="fs-title">Where the skills sit</h2>
+          <p>The donut counts the skills listed in each group of my CV.</p>
+        </div>
+        <div className="fs-alloc">
+          <div className="fs-donut" data-reveal>
+            <Donut />
+            <span className="fs-label">{TOTAL} skills in {SKILL_GROUPS.length} groups</span>
           </div>
-          <span className="font-label-sm text-label-sm text-secondary">Skills</span>
-        </div>
-        <div className="flex flex-col gap-3">
-          {PHONE_GROUPS.map((group) => (
-            <div key={group.title} className="p-4 rounded-xl bg-surface-container-low shadow-sm flex flex-col gap-2.5">
-              <div className="flex items-center gap-2">
-                <Icon name={group.icon} className="text-primary text-[18px]" />
-                <span className="font-label-sm text-label-sm text-on-surface uppercase tracking-wider font-medium">{group.title}</span>
-              </div>
-              <div className="flex flex-wrap gap-1.5">
-                {group.items.map((item) => (
-                  <span key={item} className="px-2.5 py-1 rounded-lg bg-surface text-on-surface font-label-sm text-label-sm">{item}</span>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ================= DESKTOP: three skill cards (design/code.html) ================= */}
-      <section className="hidden md:block max-w-7xl mx-auto px-margin md:px-margin-md lg:px-margin-lg py-16 w-full">
-        <div className="mb-10 flex flex-col gap-2">
-          <span className="font-label-sm text-label-sm uppercase tracking-widest text-secondary">Skills &amp; Domain Knowledge</span>
-          <h2 className="font-display text-headline-lg text-on-surface">What Thariq works with.</h2>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {DESKTOP_CARDS.map((card) => (
-            <div key={card.title} className="p-8 rounded-2xl bg-surface-container-low shadow-sm flex flex-col gap-6">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center text-primary">
-                  <Icon name={card.icon} className="text-[20px]" />
-                </div>
-                <div>
-                  <h3 className="font-headline-sm text-headline-sm text-on-surface">{card.title}</h3>
-                  <span className="font-label-sm text-label-sm text-secondary uppercase">{card.sub}</span>
+          <div className="fs-skills">
+            {SKILL_GROUPS.map((g) => (
+              <div className="fs-skill-row" key={g.name} data-reveal>
+                <h3>
+                  <i style={{ background: g.color }} />
+                  {g.name} · {g.items.length}
+                </h3>
+                <div className="fs-tags">
+                  {g.items.map((s, t) => (
+                    <span className="fs-tag" key={s} style={{ "--t": t } as React.CSSProperties}>{s}</span>
+                  ))}
                 </div>
               </div>
-              <div className="space-y-3 font-body-sm text-body-sm">
-                {card.rows.map((row) => (
-                  <div key={row} className="p-3 rounded-lg bg-surface-container-lowest flex items-center justify-between">
-                    <span className="font-medium text-on-surface">{row}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </section>
-    </div>
+      </div>
+    </section>
   );
 }

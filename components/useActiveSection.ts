@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 // The page sections in order. These ids are on the wrappers in page.tsx and the section components.
-const SECTION_IDS = ["top", "work", "skills", "contact"] as const;
+const SECTION_IDS = ["top", "record", "work", "proof", "skills", "contact"] as const;
 export type SectionId = (typeof SECTION_IDS)[number];
 
 // Returns the section that is on screen now, so the nav can highlight it as you scroll.
