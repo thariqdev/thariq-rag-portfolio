@@ -104,11 +104,11 @@ export const BEFORE_AFTER = [
 ];
 
 export const SKILL_GROUPS = [
-  { name: "Frontend", color: "#2338f5", items: ["React.js", "Next.js", "JavaScript", "TypeScript", "Redux Toolkit", "Bootstrap", "Tailwind CSS"] },
-  { name: "Backend", color: "#ff5a1f", items: ["Python", "FastAPI", "RESTful APIs", "SQLAlchemy", "JWT Authentication", "API Integration", "Node.js", "Express.js"] },
-  { name: "Databases", color: "#1f9d6b", items: ["PostgreSQL", "Database Design", "pgvector", "Alembic"] },
-  { name: "Tools and practices", color: "#f2b705", items: ["Git", "GitHub", "Postman", "Swagger (OpenAPI)", "Agile Development", "Version Control", "Docker", "GitHub Actions"] },
-  { name: "Domain", color: "#8a5cf6", items: ["Fintech", "Wealth Management", "Mutual Funds", "Investment Platforms", "KYC Workflows", "RAG", "GenAI"] },
+  { name: "Frontend", color: "#b52603", items: ["React.js", "Next.js", "JavaScript", "TypeScript", "Redux Toolkit", "Bootstrap", "Tailwind CSS"] },
+  { name: "Backend", color: "#ff5a36", items: ["Python", "FastAPI", "RESTful APIs", "SQLAlchemy", "JWT Authentication", "API Integration", "Node.js", "Express.js"] },
+  { name: "Databases", color: "#006e2f", items: ["PostgreSQL", "Database Design", "pgvector", "Alembic"] },
+  { name: "Tools and practices", color: "#8f7069", items: ["Git", "GitHub", "Postman", "Swagger (OpenAPI)", "Agile Development", "Version Control", "Docker", "GitHub Actions"] },
+  { name: "Domain", color: "#31302d", items: ["Fintech", "Wealth Management", "Mutual Funds", "Investment Platforms", "KYC Workflows", "RAG", "GenAI"] },
 ];
 
 // Dates are decimal years (Sept 2023 = 2023.67). Degrees only have years on the CV.

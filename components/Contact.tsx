@@ -5,15 +5,16 @@ import { EMAIL, PHONE, GITHUB_URL, LINKEDIN_URL } from "./siteData";
 // Last section. Email and phone have a copy button. The "Hire me" popup form is the same one the hero uses.
 export default function Contact() {
   return (
-    <section id="contact" className="fs-section fs-contact">
+    <section id="contact" className="fs-contact">
       <div className="fs-wrap">
+        <div className="fs-panel">
         <div className="fs-head" data-reveal>
           <span className="fs-no">07 / APPLY</span>
           <h2 className="fs-title">Start a conversation</h2>
           <p>I am in Dubai and can start immediately. The fastest reply is by email.</p>
         </div>
         <p className="fs-contact-big" data-reveal>
-          Need a full stack engineer<span>?</span>
+          Need a full stack <em>engineer</em><span>?</span>
         </p>
         <div className="fs-channels" data-reveal>
           <div className="fs-ch">
@@ -47,6 +48,7 @@ export default function Contact() {
         </div>
         <div className="fs-cta">
           <HireMeButton icon="mail" iconClassName="" className="fs-btn" />
+        </div>
         </div>
       </div>
     </section>

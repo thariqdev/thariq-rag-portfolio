@@ -1,0 +1,227 @@
+/*
+  Section styles for the one-page site. They use the colour tokens and fonts from globals.css (cream paper, coral, Newsreader, Plus Jakarta Sans,
+  JetBrains Mono), so the sections match the hero, header and chat widget.
+  Class names start with "fs-" so they never clash with the Tailwind classes in the other components.
+  The motion (reveals, charts that draw in, ticker, counters) is at the bottom of this file.
+*/
+:root {
+  --fs-ink: var(--color-on-surface);
+  --fs-soft: var(--color-secondary);
+  --fs-accent: var(--color-primary-strong);
+  --fs-mark: var(--color-primary-container);
+  --fs-line: #e6e0d6;
+  --fs-card: var(--color-surface-container-low);
+  --fs-card-hi: var(--color-surface-container-lowest);
+  --fs-display: var(--font-newsreader), Georgia, serif;
+  --fs-body: var(--font-jakarta), system-ui, sans-serif;
+  --fs-mono: var(--font-jetbrains), ui-monospace, Menlo, Consolas, monospace;
+}
+
+.fs-wrap { max-width: 80rem; margin: 0 auto; padding: 0 1.5rem; }
+@media (min-width: 48rem) { .fs-wrap { padding: 0 3rem; } }
+@media (min-width: 64rem) { .fs-wrap { padding: 0 5rem; } }
+.fs-label { font-family: var(--fs-mono); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--fs-soft); }
+.fs a:focus-visible, .fs button:focus-visible { outline: 3px solid var(--fs-mark); outline-offset: 3px; }
+
+/* section frame */
+.fs-section { padding: 72px 0; scroll-margin-top: 80px; }
+.fs-head { display: flex; flex-direction: column; gap: 10px; margin-bottom: 36px; max-width: 46rem; }
+.fs-no { font-family: var(--fs-mono); font-size: 0.75rem; font-weight: 500; color: var(--color-primary); letter-spacing: 0.08em; text-transform: uppercase; }
+.fs-title { margin: 0; font-family: var(--fs-display); font-weight: 400; font-size: clamp(2.1rem, 4.6vw, 3.4rem); line-height: 1.08; letter-spacing: -0.015em; text-wrap: balance; color: var(--fs-ink); }
+.fs-head p { margin: 4px 0 0; color: var(--fs-soft); max-width: 56ch; }
+
+.fs-objective { font-family: var(--fs-display); font-weight: 400; font-size: clamp(1.5rem, 3vw, 2.3rem); line-height: 1.3; max-width: 30em; margin: 0; text-wrap: pretty; color: var(--fs-ink); }
+.fs-objective mark { background: none; color: var(--color-primary); font-style: italic; box-shadow: inset 0 -0.3em 0 rgba(255, 90, 54, 0.22); }
+
+/* buttons (used by Contact and the Hire me popup trigger) */
+.fs-btn { display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 12px 22px; font-family: var(--fs-mono); font-size: 0.78rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none; border: 0; border-radius: 12px; background: var(--color-surface-container); color: var(--fs-ink); cursor: pointer; transition: transform 0.2s, box-shadow 0.2s, background 0.2s; }
+.fs-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 22px -8px rgba(27, 26, 23, 0.25); }
+.fs-btn .material-symbols-outlined { font-size: 18px; }
+.fs-cta { display: flex; gap: 12px; flex-wrap: wrap; }
+
+/* track record */
+.fs-chart { overflow-x: auto; border-radius: 20px; background: var(--fs-card); padding: 22px 12px 10px; }
+.fs-track { display: block; min-width: 680px; width: 100%; height: auto; }
+.fs-track text { font-family: var(--fs-mono); font-size: 11px; fill: var(--fs-soft); }
+.fs-track .lab { fill: var(--fs-ink); font-weight: 500; font-size: 12px; }
+.fs-track .grid { stroke: var(--fs-line); stroke-width: 1; }
+.fs-track .work { fill: var(--fs-accent); rx: 6; }
+.fs-track .edu { fill: rgba(181, 38, 3, 0.06); stroke: var(--color-primary); stroke-width: 1.5; stroke-dasharray: 5 4; rx: 6; }
+.fs-track .now { stroke: var(--fs-mark); stroke-width: 2; }
+.fs-track .nowt { fill: var(--color-primary); font-weight: 500; }
+.fs-legend { display: flex; gap: 22px; flex-wrap: wrap; margin-top: 14px; }
+.fs-legend span { display: inline-flex; align-items: center; gap: 8px; }
+.fs-legend i { width: 22px; height: 12px; display: inline-block; border-radius: 4px; }
+.fs-legend .w { background: var(--fs-accent); }
+.fs-legend .e { border: 1.5px dashed var(--color-primary); }
+
+.fs-jobs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; margin-top: 36px; }
+.fs-job { padding: 28px; border-radius: 20px; background: var(--fs-card); }
+.fs-job h3 { margin: 8px 0 2px; font-family: var(--fs-display); font-weight: 400; font-size: 1.9rem; line-height: 1.15; letter-spacing: -0.01em; }
+.fs-where { color: var(--fs-soft); margin: 0 0 16px; font-style: italic; font-family: var(--fs-display); font-size: 1.1rem; }
+.fs-bullets { margin: 0; padding-left: 1.1em; display: grid; gap: 9px; font-size: 0.95rem; list-style: disc; }
+.fs-bullets li::marker { color: var(--fs-mark); }
+
+/* projects: rows that open on hover */
+.fs-hold { border-top: 1px solid var(--fs-line); }
+.fs-proj { display: block; padding: 24px 16px; margin: 0 -16px; border-bottom: 1px solid var(--fs-line); border-radius: 18px; outline-offset: -3px; transition: background 0.3s; }
+.fs-proj-top { display: grid; grid-template-columns: 4.5rem minmax(0, 1fr) minmax(0, 15rem); gap: 28px; align-items: center; }
+.fs-proj-n { font-family: var(--fs-display); font-style: italic; font-weight: 300; font-size: 3.2rem; line-height: 1; color: var(--color-primary-fixed-dim); transition: color 0.25s; }
+.fs-proj h3 { margin: 0 0 6px; font-family: var(--fs-display); font-weight: 400; font-size: clamp(1.8rem, 3.4vw, 2.6rem); line-height: 1.05; letter-spacing: -0.015em; }
+.fs-proj-name { transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.fs-sub { margin: 0; font-family: var(--fs-mono); font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-primary); }
+.fs-proj-more { display: grid; grid-template-rows: 1fr; transition: grid-template-rows 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.fs-proj-more > div { overflow: hidden; min-height: 0; }
+.fs-more-grid { display: grid; grid-template-columns: calc(4.5rem + 28px) minmax(0, 1.6fr) minmax(0, 1fr); gap: 0 28px; padding-top: 18px; }
+.fs-more-grid > div:first-child { grid-column: 2; }
+.fs-more-grid > .fs-tags { grid-column: 3; align-content: start; }
+.fs-desc { margin: 0 0 12px; max-width: 60ch; }
+.fs-proj .fs-bullets { font-size: 0.93rem; color: var(--color-on-surface-variant); max-width: 62ch; gap: 7px; }
+.fs-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.fs-tag { font-family: var(--fs-mono); font-size: 0.72rem; padding: 4px 10px; border-radius: 999px; background: var(--color-surface-container); color: var(--color-on-surface-variant); transition: background 0.15s, color 0.15s; }
+.fs-tag:hover { background: var(--color-inverse-surface); color: var(--color-inverse-on-surface); }
+.fs-links { display: flex; flex-direction: column; gap: 6px; }
+.fs-links a { font-family: var(--fs-mono); font-size: 0.78rem; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; text-decoration: none; display: flex; justify-content: space-between; gap: 10px; padding: 10px 14px; border-radius: 12px; background: var(--fs-card-hi); box-shadow: inset 0 0 0 1px var(--fs-line); transition: background 0.15s, color 0.15s, box-shadow 0.15s; }
+.fs-links a:hover { background: var(--color-primary-strong); color: #fff; box-shadow: none; }
+.fs-arrow { display: inline-block; transition: transform 0.2s; }
+.fs-links a:hover .fs-arrow { transform: translate(3px, -3px); }
+.fs-none { font-family: var(--fs-mono); font-size: 0.74rem; color: var(--fs-soft); padding: 10px 14px; border-radius: 12px; border: 1px dashed var(--color-outline-variant); }
+.fs-hover-hint { display: none; }
+@media (hover: hover) and (min-width: 901px) {
+  .fs-hover-hint { display: inline; color: var(--color-primary); font-weight: 600; }
+  .fs-proj-more { grid-template-rows: 0fr; }
+  .fs-proj:hover, .fs-proj:focus-within { background: var(--fs-card); }
+  .fs-proj:hover .fs-proj-more, .fs-proj:focus-within .fs-proj-more { grid-template-rows: 1fr; }
+  .fs-proj:hover .fs-proj-n, .fs-proj:focus-within .fs-proj-n { color: var(--fs-mark); }
+  .fs-proj:hover .fs-proj-name, .fs-proj:focus-within .fs-proj-name { transform: translateX(10px); }
+}
+
+/* numbers */
+.fs-tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.fs-tile { padding: 24px; border-radius: 20px; background: var(--fs-card); }
+.fs-tile b { display: block; font-family: var(--fs-display); font-weight: 400; font-size: clamp(2.6rem, 5vw, 3.8rem); line-height: 1; letter-spacing: -0.02em; color: var(--color-primary); font-variant-numeric: tabular-nums; }
+.fs-tile > span { display: block; margin-top: 10px; font-size: 0.9rem; color: var(--fs-soft); }
+.fs-ba { margin-top: 40px; display: grid; gap: 26px; }
+.fs-ba-row { display: grid; grid-template-columns: minmax(0, 15rem) minmax(0, 1fr); gap: 24px; align-items: center; }
+.fs-ba-row h3 { margin: 0; font-family: var(--fs-display); font-size: 1.15rem; font-weight: 500; line-height: 1.3; }
+.fs-ba-row h3 small { display: block; font-family: var(--fs-body); font-weight: 400; color: var(--fs-soft); font-size: 0.85rem; margin-top: 2px; }
+.fs-bars { display: grid; gap: 6px; }
+.fs-bar { display: grid; grid-template-columns: 4.2rem minmax(0, 1fr); gap: 10px; align-items: center; font-family: var(--fs-mono); font-size: 0.75rem; color: var(--fs-soft); }
+.fs-bar-track { position: relative; height: 28px; border-radius: 8px; background: var(--color-surface-container); }
+.fs-bar-fill { position: absolute; top: 0; bottom: 0; left: 0; display: flex; align-items: center; justify-content: flex-end; padding-right: 10px; font-weight: 600; min-width: 4px; border-radius: 8px; }
+.fs-bar-before .fs-bar-fill { background: var(--color-secondary-fixed-dim); color: var(--fs-ink); }
+.fs-bar-after .fs-bar-fill { background: var(--fs-mark); color: #3d0600; }
+.fs-bar-out { position: absolute; top: 50%; transform: translateY(-50%); font-weight: 600; color: var(--fs-ink); white-space: nowrap; }
+
+/* skills */
+.fs-alloc { display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); gap: 48px; align-items: start; }
+.fs-donut { border-radius: 20px; background: var(--fs-card); padding: 24px; }
+.fs-donut svg { width: 100%; height: auto; display: block; }
+.fs-donut text { font-family: var(--fs-display); fill: var(--fs-ink); }
+.fs-donut .fs-label { display: block; margin-top: 12px; }
+.fs-skills { border-top: 1px solid var(--fs-line); }
+.fs-skill-row { display: grid; grid-template-columns: 11rem minmax(0, 1fr); gap: 18px; padding: 18px 0; border-bottom: 1px solid var(--fs-line); }
+.fs-skill-row h3 { margin: 0; display: flex; align-items: center; gap: 10px; font-family: var(--fs-mono); font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 500; }
+.fs-skill-row h3 i { width: 14px; height: 14px; flex: none; display: inline-block; border-radius: 50%; }
+
+/* education */
+.fs-edu-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.fs-edu { padding: 26px; border-radius: 20px; background: var(--fs-card); }
+.fs-edu h3 { margin: 8px 0 6px; font-family: var(--fs-display); font-weight: 400; font-size: 1.6rem; line-height: 1.15; letter-spacing: -0.01em; }
+.fs-edu p { margin: 0; color: var(--fs-soft); font-size: 0.95rem; }
+
+/* contact: one dark panel */
+.fs-contact { padding: 40px 0 24px; }
+.fs-contact .fs-wrap { padding: 0; }
+.fs-panel { background: var(--color-inverse-surface); color: var(--color-inverse-on-surface); border-radius: 28px; padding: 56px 48px; margin: 0 1rem; }
+@media (min-width: 64rem) { .fs-panel { margin: 0 auto; max-width: 70rem; } }
+.fs-panel .fs-head { margin-bottom: 28px; }
+.fs-panel .fs-no { color: var(--color-primary-fixed-dim); }
+.fs-panel .fs-title { color: inherit; }
+.fs-panel .fs-head p { color: rgba(243, 240, 235, 0.75); }
+.fs-contact-big { font-family: var(--fs-display); font-weight: 400; font-size: clamp(2.6rem, 8vw, 6rem); line-height: 1; margin: 0 0 36px; letter-spacing: -0.02em; text-wrap: balance; }
+.fs-contact-big em { color: var(--fs-mark); }
+.fs-contact-big span { color: var(--fs-mark); }
+.fs-channels { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.fs-ch { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 16px 20px; border-radius: 16px; background: rgba(243, 240, 235, 0.07); text-decoration: none; min-width: 0; transition: background 0.2s; }
+a.fs-ch:hover { background: rgba(243, 240, 235, 0.14); }
+.fs-ch-v { font-weight: 500; overflow-wrap: anywhere; display: block; }
+.fs-ch .fs-label { color: rgba(243, 240, 235, 0.65); display: block; margin-bottom: 2px; }
+.fs-ch button { font-family: var(--fs-mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 500; background: transparent; color: inherit; border: 1px solid rgba(243, 240, 235, 0.4); border-radius: 999px; min-height: 36px; padding: 6px 14px; cursor: pointer; flex: none; transition: background 0.15s, color 0.15s; }
+.fs-ch button:hover { background: var(--fs-mark); border-color: var(--fs-mark); color: #3d0600; }
+.fs-ch-arrow { font-family: var(--fs-mono); flex: none; }
+.fs-panel .fs-cta { margin-top: 24px; }
+.fs-panel .fs-btn { background: var(--color-primary-strong); color: #fff; }
+
+/* mobile */
+@media (max-width: 900px) {
+  .fs-jobs { grid-template-columns: 1fr; }
+  .fs-proj-top { grid-template-columns: 1fr; gap: 12px; align-items: start; }
+  .fs-proj-n { font-size: 2.2rem; }
+  .fs-more-grid { grid-template-columns: 1fr; gap: 14px; }
+  .fs-more-grid > div:first-child, .fs-more-grid > .fs-tags { grid-column: 1; }
+  .fs-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .fs-ba-row { grid-template-columns: 1fr; gap: 10px; }
+  .fs-alloc { grid-template-columns: 1fr; gap: 28px; }
+  .fs-edu-grid { grid-template-columns: 1fr; }
+  .fs-channels { grid-template-columns: 1fr; }
+  .fs-section { padding: 52px 0; }
+  .fs-skill-row { grid-template-columns: 1fr; gap: 10px; }
+  .fs-panel { padding: 36px 22px; }
+}
+
+/* ------------------------------------------------------------------ motion ------------------------------------------------------------------ */
+
+/* Page load: the letters of the name rise one by one */
+.fs-letter { display: inline-block; animation: fs-rise 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both; animation-delay: calc(var(--i) * var(--step, 45ms)); }
+@keyframes fs-rise { from { transform: translateY(0.4em); opacity: 0; } to { transform: none; opacity: 1; } }
+
+/* Scroll progress bar */
+.fs-progress { position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 60; background: var(--fs-mark); transform-origin: 0 50%; transform: scaleX(var(--p, 0)); pointer-events: none; }
+
+/* Clock in the header */
+.fs-clock { font-family: var(--fs-mono); font-size: 0.72rem; letter-spacing: 0.06em; color: var(--fs-soft); white-space: nowrap; }
+.fs-clock b { color: var(--fs-ink); font-weight: 500; font-variant-numeric: tabular-nums; }
+
+/* Ticker under the hero */
+.fs-ticker { background: var(--color-inverse-surface); color: var(--color-inverse-on-surface); overflow: hidden; }
+.fs-ticker-track { display: flex; width: max-content; animation: fs-marquee 40s linear infinite; }
+.fs-ticker:hover .fs-ticker-track { animation-play-state: paused; }
+.fs-ticker ul { display: flex; margin: 0; padding: 0; list-style: none; flex: none; }
+.fs-ticker li { display: inline-flex; align-items: center; gap: 14px; padding: 13px 18px 13px 0; font-family: var(--fs-mono); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; white-space: nowrap; }
+.fs-ticker li::before { content: ""; width: 18px; }
+.fs-ticker i { font-style: normal; color: var(--color-tertiary-fixed-dim); font-size: 0.65rem; }
+.fs-ticker li:first-child { color: var(--color-primary-fixed-dim); font-weight: 600; }
+@keyframes fs-marquee { to { transform: translateX(-50%); } }
+
+/* Scroll reveals. Only active once Motion.tsx adds "fs-armed" to the page. Without it everything is visible. */
+.fs-armed [data-reveal] { opacity: 0; transform: translateY(26px); transition: opacity 0.7s ease, transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.3s; transition-delay: calc(var(--d, 0) * 90ms), calc(var(--d, 0) * 90ms), 0s; }
+.fs-armed [data-reveal].fs-in { opacity: 1; transform: none; }
+
+/* Timeline bars draw from the left, then the "now" marker appears */
+.fs-track .work, .fs-track .edu { transform-box: fill-box; transform-origin: 0 50%; transition: transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1); transition-delay: calc(var(--i, 0) * 0.18s + 0.2s); }
+.fs-armed .fs-chart:not(.fs-in) .fs-track .work, .fs-armed .fs-chart:not(.fs-in) .fs-track .edu { transform: scaleX(0); }
+.fs-track .now, .fs-track .nowt { transition: opacity 0.5s ease 1.1s; }
+.fs-armed .fs-chart:not(.fs-in) .fs-track .now, .fs-armed .fs-chart:not(.fs-in) .fs-track .nowt { opacity: 0; }
+
+/* Before and after bars grow, then their labels fade in */
+.fs-bar-fill { transition: clip-path 1.1s cubic-bezier(0.2, 0.8, 0.2, 1) 0.2s; clip-path: inset(0 0 0 0 round 8px); }
+.fs-bar-after .fs-bar-fill { transition-delay: 0.7s; }
+.fs-bar-out { transition: opacity 0.4s ease 1.6s; }
+.fs-armed .fs-ba-row:not(.fs-in) .fs-bar-fill { clip-path: inset(0 100% 0 0 round 8px); }
+.fs-armed .fs-ba-row:not(.fs-in) .fs-bar-out { opacity: 0; }
+
+/* Donut arcs draw round, skill tags pop in one after another */
+.fs-arc { stroke-dasharray: 100; stroke-dashoffset: 0; transition: stroke-dashoffset 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) calc(var(--i, 0) * 0.15s + 0.2s); }
+.fs-armed .fs-donut:not(.fs-in) .fs-arc { stroke-dashoffset: 100; }
+.fs-skill-row .fs-tag { transition: opacity 0.4s ease calc(var(--t, 0) * 45ms + 0.25s), transform 0.4s ease calc(var(--t, 0) * 45ms + 0.25s), background 0.15s, color 0.15s; }
+.fs-armed .fs-skill-row:not(.fs-in) .fs-tag { opacity: 0; transform: translateY(10px) scale(0.96); }
+
+/* The question mark in the contact headline nods */
+.fs-contact-big span { display: inline-block; animation: fs-nod 2.4s ease-in-out infinite; transform-origin: 50% 80%; }
+@keyframes fs-nod { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-9deg) translateY(-4px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .fs-letter, .fs-ticker-track, .fs-contact-big span { animation: none; }
+  .fs-armed [data-reveal] { opacity: 1; transform: none; transition: none; }
+}

@@ -7,8 +7,8 @@ import { useActiveSection, type SectionId } from "./useActiveSection";
 // sections, so those two tabs jump to Skills and Contact instead.
 // The highlighted tab follows the section you are looking at.
 const TABS: { icon: string; label: string; href: string; id: SectionId }[] = [
-  { icon: "auto_stories", label: "Top", href: "#top", id: "top" },
-  { icon: "terminal", label: "Projects", href: "#work", id: "work" },
+  { icon: "auto_stories", label: "Index", href: "#top", id: "top" },
+  { icon: "terminal", label: "Works", href: "#work", id: "work" },
   { icon: "history_edu", label: "Skills", href: "#skills", id: "skills" },
   { icon: "badge", label: "Contact", href: "#contact", id: "contact" },
 ];
