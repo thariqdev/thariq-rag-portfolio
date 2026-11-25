@@ -1,6 +1,7 @@
 import SiteHeader from "../components/SiteHeader";
 import Hero from "../components/Hero";
 import Ticker from "../components/Ticker";
+import Orbit from "../components/Orbit";
 import About from "../components/About";
 import Record from "../components/Record";
 import Projects from "../components/Projects";
@@ -23,6 +24,7 @@ export default function Home() {
       <main id="top" className="fs w-full bg-surface pb-24 pt-16 md:pb-0 md:pt-20">
         <Hero />
         <Ticker />
+        <Orbit />
         <About />
         <Record />
         <Projects />

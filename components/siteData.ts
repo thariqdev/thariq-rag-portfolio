@@ -80,6 +80,7 @@ export const PROJECTS: Project[] = [
       "JWT authentication and MPIN-based security workflows.",
     ],
     tags: ["Python", "FastAPI", "SQLAlchemy", "PostgreSQL"],
+    links: [{ label: "Live site", href: "https://fundsapp.com/" }],
   },
   {
     n: "04",
@@ -94,6 +95,7 @@ export const PROJECTS: Project[] = [
     sub: "Wealth management platform · frontend",
     desc: "I built admin dashboards, management interfaces and investment workflow screens. The components are reusable and responsive, and they connect to REST and third-party APIs.",
     tags: ["React.js", "Next.js", "REST APIs"],
+    links: [{ label: "Live site", href: "https://rayi.co.in/" }],
   },
 ];
 

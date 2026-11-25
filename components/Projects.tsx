@@ -10,13 +10,13 @@ export default function Projects() {
           <span className="fs-no">03 / HOLDINGS</span>
           <h2 className="fs-title">Projects</h2>
           <p>
-            Five projects. Two are mine and public. Three come from client work.
+            Five projects. Two are mine and public. Three come from client work at Evoqins, and two of those have live sites.
             <span className="fs-hover-hint"> Hover a row to open it.</span>
           </p>
         </div>
         <div className="fs-hold">
           {PROJECTS.map((p, i) => (
-            <article className="fs-proj" key={p.name} tabIndex={0} data-reveal style={{ "--d": i } as React.CSSProperties}>
+            <article id={`proj-${p.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`} className="fs-proj" key={p.name} tabIndex={0} data-reveal style={{ "--d": i } as React.CSSProperties}>
               <div className="fs-proj-top">
                 <div className="fs-proj-n">{p.n}</div>
                 <div className="fs-proj-name">

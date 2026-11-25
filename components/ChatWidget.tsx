@@ -2,6 +2,7 @@
 
 import { Fragment, useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Icon from "./Icon";
+import Echo, { type EchoMood } from "./Echo";
 
 type Message = { role: "user" | "assistant"; text: string; sources?: string[]; isError?: boolean };
 
@@ -52,6 +53,28 @@ export default function ChatWidget() {
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hasOpened = useRef(false);
 
+  // Echo's mood. focused = the input has focus. typing = the visitor typed in the last 1.1 s.
+  // flash = "happy" or "sad" for 2.2 s after an answer or an error.
+  const [focused, setFocused] = useState(false);
+  const [typing, setTyping] = useState(false);
+  const [flash, setFlash] = useState<"happy" | "sad" | null>(null);
+  const typingTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const flashTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  function flashEcho(kind: "happy" | "sad") {
+    if (flashTimer.current) clearTimeout(flashTimer.current);
+    setFlash(kind);
+    flashTimer.current = setTimeout(() => setFlash(null), 2200);
+  }
+  // Clear all timers when the widget goes away.
+  useEffect(
+    () => () => {
+      if (typingTimer.current) clearTimeout(typingTimer.current);
+      if (flashTimer.current) clearTimeout(flashTimer.current);
+      if (closeTimer.current) clearTimeout(closeTimer.current);
+    },
+    [],
+  );
+
   // Opening and closing happen in these two functions (not in effects), which keeps the state simple.
   const openPanel = useCallback(() => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
@@ -62,6 +85,7 @@ export default function ChatWidget() {
   }, []);
 
   const closePanel = useCallback(() => {
+    setFocused(false); // the input is leaving the page, so it will not send a blur event
     setOpen(false);
     setShown(false);
     closeTimer.current = setTimeout(() => setMounted(false), 300); // the design's duration-300
@@ -159,6 +183,7 @@ export default function ChatWidget() {
       // Show each file name once.
       const sources = [...new Set<string>((data.sources ?? []).map((s) => s.source))];
       setMessages((m) => [...m, { role: "assistant", text: data.answer as string, sources }]);
+      flashEcho(REFUSAL.test(data.answer) ? "sad" : "happy"); // "I don't know" is a sad face, a real answer is happy
     } catch (err) {
       // The server sends friendly messages (including rate limits). A timeout and a network failure have their own.
       let text: string;
@@ -166,6 +191,7 @@ export default function ChatWidget() {
       else if (err instanceof TypeError) text = "Could not reach the server. Please check your connection.";
       else text = (err as Error).message;
       setMessages((m) => [...m, { role: "assistant", text, isError: true }]);
+      flashEcho("sad");
     } finally {
       clearTimeout(timer);
       setLoading(false);
@@ -207,13 +233,13 @@ export default function ChatWidget() {
           </div>
           <button
             ref={launcherPhoneRef}
-            className="pointer-events-auto flex items-center gap-2.5 h-12 pl-3.5 pr-4 rounded-full bg-inverse-surface text-inverse-on-surface shadow-[0_12px_32px_-4px_rgba(27,26,23,0.2)] active:scale-95 transition-transform"
+            className="echo-host pointer-events-auto flex items-center gap-2.5 h-12 pl-3.5 pr-4 rounded-full bg-inverse-surface text-inverse-on-surface shadow-[0_12px_32px_-4px_rgba(27,26,23,0.2)] active:scale-95 transition-transform"
             onClick={openPanel}
             aria-label="Open AI Assistant"
             type="button"
           >
-            <div className="relative flex items-center justify-center w-6 h-6 rounded-full bg-primary-strong text-on-primary font-label-sm text-label-sm font-semibold">
-              MT
+            <div className="relative flex items-center justify-center w-8 h-8 rounded-full bg-primary-container">
+              <Echo size={32} />
               <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-tertiary-container ring-1 ring-inverse-surface"></span>
             </div>
             <span className="font-body-sm text-body-sm font-medium text-inverse-on-surface">Talk to Thariq</span>
@@ -242,14 +268,13 @@ export default function ChatWidget() {
           </div>
           <button
             ref={launcherDesktopRef}
-            className="pointer-events-auto group relative flex items-center gap-3 pl-3.5 pr-4 py-3 rounded-full bg-inverse-surface text-inverse-on-surface shadow-[0_12px_32px_-4px_rgba(27,26,23,0.18)] hover:bg-on-surface transition-all active:scale-[0.98]"
+            className="echo-host pointer-events-auto group relative flex items-center gap-3 pl-3.5 pr-4 py-3 rounded-full bg-inverse-surface text-inverse-on-surface shadow-[0_12px_32px_-4px_rgba(27,26,23,0.18)] hover:bg-on-surface transition-all active:scale-[0.98]"
             onClick={openPanel}
             aria-label="Open AI Assistant"
             type="button"
           >
-            <div className="relative w-8 h-8 rounded-full bg-primary-strong text-on-primary flex items-center justify-center font-headline-sm text-xs font-bold">
-              MT
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-container opacity-50"></span>
+            <div className="relative w-8 h-8 rounded-full bg-primary-container flex items-center justify-center">
+              <Echo size={32} />
             </div>
             <div className="flex flex-col text-left">
               <span className="font-label-sm text-label-sm uppercase tracking-widest text-primary-fixed">Talk to Thariq</span>
@@ -282,6 +307,13 @@ export default function ChatWidget() {
       first.focus();
     }
   }
+
+  const mood: EchoMood = loading ? "thinking" : flash ?? (typing ? "typing" : focused ? "listening" : "idle");
+  // Where Echo looks: up and right while thinking, along the input line while typing, otherwise follow the mouse.
+  const look = loading ? { x: 0.6, y: -0.7 } : focused || typing ? { x: -0.8 + 1.6 * Math.min(input.length / 36, 1), y: 0.8 } : null;
+
+  // Echo pops up above the input bar while the visitor is using it, waiting for an answer, or seeing a reaction.
+  const echoActive = focused || typing || loading || flash !== null;
 
   const panelPosition = shown
     ? "translate-y-0 md:scale-100 md:opacity-100"
@@ -320,7 +352,9 @@ export default function ChatWidget() {
         {/* Header: phone */}
         <div className="px-space-md py-2 flex items-center justify-between border-b-0 bg-surface shrink-0 md:hidden">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-full bg-primary-strong text-on-primary flex items-center justify-center font-label-sm text-label-sm font-bold">MT</div>
+            <div className="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center">
+              <Echo size={32} mood={mood} look={look} />
+            </div>
             <div className="flex flex-col">
               <div className="flex items-center gap-1.5">
                 <span className="font-body-sm text-body-sm font-medium text-on-surface">Thariq Assistant</span>
@@ -343,8 +377,8 @@ export default function ChatWidget() {
         {/* Header: desktop */}
         <div className="hidden md:flex px-4 py-3 bg-surface-container-low border-b border-surface-container-highest items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
-            <div className="relative w-9 h-9 rounded-full bg-inverse-surface text-inverse-on-surface font-headline-sm flex items-center justify-center text-sm font-semibold">
-              MT
+            <div className="relative w-8 h-8 rounded-full bg-primary-container flex items-center justify-center">
+              <Echo size={32} mood={mood} look={look} />
               <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-tertiary ring-2 ring-surface"></span>
             </div>
             <div className="flex flex-col">
@@ -475,7 +509,12 @@ export default function ChatWidget() {
         </div>
 
         {/* Input. A form means Enter sends. */}
-        <div className="px-4 pt-3 bg-surface-container-low flex flex-col gap-1 pb-[max(0.75rem,env(safe-area-inset-bottom))] shrink-0 md:p-3 md:border-t md:border-surface-container-highest">
+        <div className="relative px-4 pt-3 bg-surface-container-low flex flex-col gap-1 pb-[max(0.75rem,env(safe-area-inset-bottom))] shrink-0 md:p-3 md:border-t md:border-surface-container-highest">
+          <div className="echo-pop-win" aria-hidden="true">
+            <div className={`echo-pop${echoActive ? " is-in" : ""}`}>
+              <Echo variant="peek" size={54} mood={mood} look={look} />
+            </div>
+          </div>
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -487,7 +526,14 @@ export default function ChatWidget() {
               ref={inputRef}
               value={input}
               maxLength={MAX_LENGTH}
-              onChange={(e) => setInput(e.target.value)}
+              onChange={(e) => {
+                setInput(e.target.value);
+                setTyping(true);
+                if (typingTimer.current) clearTimeout(typingTimer.current);
+                typingTimer.current = setTimeout(() => setTyping(false), 1100);
+              }}
+              onFocus={() => setFocused(true)}
+              onBlur={() => setFocused(false)}
               placeholder="Ask about Thariq's work..."
               className="flex-1 h-11 px-3.5 rounded-xl bg-surface border border-surface-container-highest text-on-surface placeholder:text-secondary placeholder:text-[13px] text-base outline-none focus:border-on-surface focus:ring-1 focus:ring-on-surface transition-all min-w-0 md:w-full md:h-auto md:pr-20 md:py-2.5 md:text-body-sm md:border-0"
             />

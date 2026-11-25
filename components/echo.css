@@ -1,0 +1,93 @@
+/* Echo, the chat mascot. Plain CSS, no library. Only transform and opacity move, so it stays cheap.
+   Colours come from the site: coral eyes and ear cups, cream body, dark screen. */
+
+.echo { display: block; overflow: visible; --gx: 0px; --gy: 0px; --es: 1; --ey: 1; }
+
+/* ---------- Idle float: the head drifts up and down a little ---------- */
+.echo-float { animation: echo-float 3.6s ease-in-out infinite alternate; }
+@keyframes echo-float { from { transform: translateY(0); } to { transform: translateY(-2.5px); } }
+
+/* ---------- Head pose per mood ---------- */
+.echo-head { transform-origin: 60px 100px; transition: transform 0.45s cubic-bezier(0.3, 1.5, 0.5, 1); }
+.echo-m-listening .echo-head { transform: translateY(-1px) scale(1.02); }
+.echo-m-typing .echo-head { transform: translateY(2px) rotate(2.5deg); }
+.echo-m-thinking .echo-head { transform: rotate(-7deg); }
+.echo-m-sad .echo-head { transform: translateY(3px) rotate(3deg); }
+.echo-m-happy .echo-head { animation: echo-hop 0.7s cubic-bezier(0.3, 1.4, 0.5, 1); }
+@keyframes echo-hop {
+  0% { transform: translateY(0) scale(1, 1); }
+  25% { transform: translateY(-9px) scale(0.97, 1.05); }
+  55% { transform: translateY(0) scale(1.05, 0.94); }
+  100% { transform: translateY(0) scale(1, 1); }
+}
+
+/* ---------- Eyes: they follow the pointer (or the caret) through --gx and --gy ---------- */
+.echo-eyes { transform: translate(var(--gx), var(--gy)); transition: transform 0.18s ease-out; }
+.echo .eo-g { transform-box: fill-box; transform-origin: center; transform: scale(var(--es), var(--ey)); transition: transform 0.09s ease-out, opacity 0.15s; }
+.echo.is-blink { --ey: 0.08; }
+.echo-m-listening, .echo-m-typing { --es: 1.1; }
+
+.echo .eh, .echo .et, .echo .es-brow { opacity: 0; transition: opacity 0.15s; }
+.echo .mouth { opacity: 0; transition: opacity 0.15s; }
+.echo .m-smile { opacity: 1; }
+.echo .cheek { opacity: 0; transition: opacity 0.2s; }
+
+/* Happy (answer arrived, or the mouse is over it): the eyes turn into arcs and the cheeks glow */
+.echo-m-happy .eo-g, .echo-host:hover .echo .eo-g { opacity: 0; }
+.echo-m-happy .eh, .echo-host:hover .echo .eh { opacity: 1; }
+.echo-m-happy .m-smile, .echo-host:hover .echo .m-smile { opacity: 0; }
+.echo-m-happy .m-grin, .echo-host:hover .echo .m-grin { opacity: 1; }
+.echo-m-happy .cheek, .echo-host:hover .echo .cheek { opacity: 0.4; }
+
+/* Thinking: flat focused eyes, a halo, and three dots */
+.echo-m-thinking .eo-g { opacity: 0; }
+.echo-m-thinking .et { opacity: 1; }
+.echo-m-thinking .m-smile { opacity: 0; }
+.echo-m-thinking .m-flat { opacity: 1; }
+
+/* Typing and listening: wide attentive eyes, small smile, light cheeks */
+.echo-m-typing .cheek, .echo-m-listening .cheek { opacity: 0.2; }
+
+/* Sad (not in the documents, or an error): eyebrows tilt down and the mouth flips */
+.echo-m-sad .es-brow { opacity: 1; }
+.echo-m-sad .m-smile { opacity: 0; }
+.echo-m-sad .m-frown { opacity: 1; }
+
+/* ---------- Extras that only show in some moods ---------- */
+.echo-think, .echo-spark { opacity: 0; transition: opacity 0.2s; }
+.echo-m-thinking .echo-think { opacity: 1; }
+.echo-m-happy .echo-spark { opacity: 1; }
+/* the dashes slide around the ring (the ring itself stays put) */
+.echo-halo { animation: echo-spin 1.6s linear infinite; }
+@keyframes echo-spin { to { stroke-dashoffset: -22; } }
+.echo-dot { animation: echo-dot 1.1s ease-in-out infinite; }
+.echo-dot:nth-child(2) { animation-delay: 0.18s; }
+.echo-dot:nth-child(3) { animation-delay: 0.36s; }
+@keyframes echo-dot { 0%, 70%, 100% { opacity: 0.25; transform: translateY(0); } 35% { opacity: 1; transform: translateY(-3px); } }
+.echo-star { transform-box: fill-box; transform-origin: center; }
+.echo-m-happy .echo-star { animation: echo-pop-star 0.8s ease-out both; }
+.echo-m-happy .echo-spark g:nth-child(2) .echo-star { animation-delay: 0.12s; }
+@keyframes echo-pop-star { 0% { transform: scale(0) rotate(-40deg); } 55% { transform: scale(1.25) rotate(8deg); } 100% { transform: scale(1) rotate(0); } }
+
+/* Antenna light: calm glow normally, quick pulse while thinking */
+.echo-bulb { transform-box: fill-box; transform-origin: center; animation: echo-bulb 2.8s ease-in-out infinite; }
+.echo-m-thinking .echo-bulb { animation-duration: 0.7s; }
+@keyframes echo-bulb { 0%, 100% { opacity: 0.75; transform: scale(1); } 50% { opacity: 1; transform: scale(1.18); } }
+
+/* Waving hand (the big peeking version), when the answer arrives or you hover */
+.echo-wave { transform-box: fill-box; transform-origin: 20% 100%; }
+.echo-m-happy .echo-wave { animation: echo-wave 0.9s ease-in-out 2; }
+@keyframes echo-wave { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-22deg); } 60% { transform: rotate(14deg); } }
+
+/* ---------- Tiny Echo that pops up from behind the top edge of the chat input bar ---------- */
+/* The window is a strip just above the input bar. It hides everything below its bottom edge, so Echo looks like it rises from behind the bar. */
+.echo-pop-win { position: absolute; left: 0; right: 0; bottom: 100%; height: 70px; overflow: hidden; pointer-events: none; z-index: 5; }
+.echo-pop { position: absolute; right: 26px; bottom: 0; transform: translateY(105%); transition: transform 0.3s ease-in; }
+.echo-pop.is-in { transform: translateY(6px); transition: transform 0.55s cubic-bezier(0.34, 1.7, 0.5, 1); }
+
+/* ---------- Reduced motion: no floating, hopping, spinning or pop. It still changes face. ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .echo-float, .echo-halo, .echo-dot, .echo-bulb, .echo-wave, .echo-star, .echo-m-happy .echo-head { animation: none !important; }
+  .echo-head, .echo-eyes { transition: none; }
+  .echo-pop, .echo-pop.is-in { transition: none; }
+}

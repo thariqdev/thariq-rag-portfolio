@@ -225,3 +225,56 @@ a.fs-ch:hover { background: rgba(243, 240, 235, 0.14); }
   .fs-letter, .fs-ticker-track, .fs-contact-big span { animation: none; }
   .fs-armed [data-reveal] { opacity: 1; transform: none; transition: none; }
 }
+
+/* ---------------------------------------------------------- orbit: cards circling the portrait ---------------------------------------------------------- */
+.fs-orbit { position: relative; height: 320vh; }
+.fs-orbit-stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; perspective: 2400px; perspective-origin: 50% 45%; --ph: min(54svh, 580px); --pw: calc(var(--ph) * 0.6); }
+.fs-orbit-head { position: relative; z-index: 3; text-align: center; padding: clamp(92px, 13svh, 128px) 24px 0; pointer-events: none; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.fs-orbit-title { margin: 0; font-family: var(--fs-display); font-weight: 400; font-size: clamp(2.3rem, 6.2vw, 4.8rem); line-height: 1.02; letter-spacing: -0.02em; text-wrap: balance; }
+.fs-orbit-title em { color: var(--color-primary); }
+.fs-orbit-hint { position: absolute; left: clamp(20px, 4vw, 56px); bottom: 28px; margin: 0; z-index: 3; pointer-events: none; }
+
+/* flat coral disc behind the portrait. It sits outside the 3D scene, so cards never vanish behind it. */
+.fs-orbit-disc { position: absolute; left: 50%; bottom: calc(var(--ph) * -0.36); width: calc(var(--pw) * 1.35); aspect-ratio: 1; transform: translateX(-50%); border-radius: 50%; background: radial-gradient(circle at 50% 28%, #ff9a7c 0%, var(--color-primary-container) 62%, var(--color-primary-strong) 100%); }
+
+.fs-orbit-scene { position: absolute; left: 50%; bottom: 0; width: var(--pw); height: var(--ph); transform: translateX(-50%) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transform-style: preserve-3d; transition: transform 0.25s ease-out; }
+.fs-orbit-portrait { position: absolute; inset: 0; transform: translateZ(0); }
+.fs-orbit-portrait img { width: 100%; height: 100%; object-fit: contain; object-position: bottom; display: block; }
+/* the orbit path: a thin dashed circle seen almost edge-on, centred at head height */
+.fs-orbit-ring { position: absolute; left: 50%; top: 30%; width: min(68vw, 940px); aspect-ratio: 1; border: 1.5px dashed rgba(181, 38, 3, 0.4); border-radius: 50%; transform: translate(-50%, -50%) rotateX(84deg); }
+.fs-orbit-card { position: absolute; left: 50%; top: 30%; translate: -50% -50%; width: clamp(160px, 17vw, 230px); opacity: 0; backface-visibility: hidden; }
+.fs-orbit-btn { all: unset; box-sizing: border-box; display: flex; align-items: center; gap: 10px; width: 100%; padding: 12px 14px; border-radius: 18px; background: #fff; box-shadow: 0 10px 22px -14px rgba(27, 26, 23, 0.3), inset 0 0 0 1px rgba(230, 224, 214, 1); cursor: pointer; text-align: left; transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.28s, background 0.28s; -webkit-font-smoothing: antialiased; }
+.fs-orbit-btn:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 3px; }
+.fs-orbit-go { margin-left: auto; flex: none; font-size: 0.95rem; color: var(--color-primary); opacity: 0; transform: translate(-4px, 4px); transition: opacity 0.25s, transform 0.25s; }
+@media (hover: hover) {
+  .fs-orbit-btn:hover { transform: translateY(-8px) scale(1.06); background: #fffaf6; box-shadow: 0 24px 34px -16px rgba(181, 38, 3, 0.45), inset 0 0 0 1.5px var(--color-primary-container); }
+  .fs-orbit-btn:hover .fs-orbit-icon { background: var(--color-primary-container); color: #fff; transform: rotate(-8deg) scale(1.08); }
+  .fs-orbit-btn:hover .fs-orbit-go { opacity: 1; transform: none; }
+}
+.fs-orbit-btn:active { transform: translateY(-3px) scale(0.98); }
+.fs-flash { animation: fs-flash 2.2s ease-out; }
+@keyframes fs-flash { 0%, 30% { box-shadow: 0 0 0 3px var(--color-primary-container), 0 0 0 14px rgba(255, 90, 54, 0.16); border-radius: 18px; } 100% { box-shadow: 0 0 0 3px transparent, 0 0 0 14px transparent; } }
+.fs-proj, #skills { scroll-margin-top: 90px; }
+.fs-orbit-icon { transition: background 0.25s, color 0.25s, transform 0.25s; flex: none; width: 34px; height: 34px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; overflow: hidden; background: var(--color-primary-fixed); color: var(--color-primary); }
+.fs-orbit-text { display: flex; flex-direction: column; min-width: 0; line-height: 1.25; }
+.fs-orbit-text b { font-size: 0.86rem; font-weight: 600; color: var(--fs-ink); }
+.fs-orbit-text small { font-size: 0.72rem; color: var(--fs-soft); }
+
+@media (max-width: 900px) {
+  .fs-orbit { height: 270vh; }
+  .fs-orbit-stage { --ph: min(48svh, 470px); }
+  .fs-orbit-extra { display: none; }
+  .fs-orbit-card { width: 112px; }
+  .fs-orbit-btn { padding: 8px 10px; gap: 8px; border-radius: 14px; }
+  .fs-orbit-go { display: none; }
+  .fs-orbit-hint { display: none; }
+  .fs-orbit-icon { width: 28px; height: 28px; border-radius: 10px; }
+  .fs-orbit-text b { font-size: 0.76rem; }
+  .fs-orbit-text small { display: none; }
+  .fs-orbit-ring { width: 60vw; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fs-orbit { height: auto; }
+  .fs-orbit-stage { position: relative; height: 100svh; }
+  .fs-orbit-scene { transition: none; }
+}
